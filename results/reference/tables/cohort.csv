@@ -1,0 +1,8 @@
+metric,value,note
+per_algorithm_step_person_days,[130186],Each of 7 step files; should be identical.
+per_algorithm_step_subjects,[14693],Each of 7 step files; should be identical.
+seven_way_intersection_person_days,130186,Person-days present in all 7 step files.
+seven_way_intersection_subjects,14693,Subjects present in all 7 step files.
+troiano_intersect_seven_way_person_days,57080,Final D9-valid person-days used.
+d9_valid_adult_subjects_final,8646,Analysis denominator subjects.
+d9_valid_person_days_final,57080,Analysis denominator valid person-days.

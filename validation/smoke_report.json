@@ -1,0 +1,20 @@
+{
+  "status": "PASS",
+  "release_version": "1.1.1",
+  "mode": "smoke",
+  "started_utc": "2026-08-23T15:09:43.896975+00:00",
+  "finished_utc": "2026-08-23T15:33:22.261124+00:00",
+  "wall_time_seconds": 1418.364,
+  "bootstrap_replicates": 2,
+  "input_hashes_verified": 12,
+  "runner_exit_code": 0,
+  "modules_passed": 8,
+  "cohort_subjects": 8646,
+  "cohort_valid_person_days": 57080,
+  "directed_pairs": 42,
+  "exact_knot_rows": 11416,
+  "direction_metadata_rows": 42,
+  "formal_101_node_resource_rows": 0,
+  "resource_version": "1.1.1",
+  "note": "After the manuscript, Figure 2, and environment-file revisions, the v1.1.1 unified runner rebuilt the core, subgroup, sample-alignment, exact resource, E/H, and boundary modules from an empty output directory using twelve checksum-verified inputs. Full-only wear, publication-table/figure, and terminal-validator branches remain covered by the controlled formal release-layer report."
+}

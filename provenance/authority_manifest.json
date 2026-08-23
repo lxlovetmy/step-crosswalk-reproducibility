@@ -1,0 +1,263 @@
+{
+  "schema_version": 1,
+  "generated_utc": "2026-08-23T15:42:37Z",
+  "release_scope": "current_crosswalk_only_manuscript",
+  "authority_rule": "Current writing files define scope; listed aggregate artifacts define numeric reference values; historical plans and figures do not override them.",
+  "source_project": {
+    "git_head": "2e0b7f2ee9ce503b40ffb9dc74eef8188b09c8e5",
+    "git_status_porcelain_v1_sha256": "bef25a8db178f5ac4b392f4f75030059b6fca684b37c854b1e1203d114815aee",
+    "git_status_entry_count": 147,
+    "snapshot_note": "The private source worktree is dirty and is not itself a release snapshot. No source-project file is copied or modified in Phase 1."
+  },
+  "protected_writing_files": [
+    {
+      "relative_path": "MSSE_manuscript_v0.25_crosswalk_only.docx",
+      "sha256": "3811b5be9ec69752f420d2846ccac477a6152e6f179f0bd50a5f2f4417eaab90",
+      "role": "current_English_manuscript"
+    },
+    {
+      "relative_path": "MSSE_manuscript_v0.25_crosswalk_only_中文.docx",
+      "sha256": "8deedd195b080696686056b096668c872087a75b1d1481870ee6a93f95294db5",
+      "role": "current_Chinese_manuscript"
+    },
+    {
+      "relative_path": "SDC_v0.20_crosswalk_only.docx",
+      "sha256": "1914a072a5e26f56d4e2c3932c99b4a6581e8876806444eac7631a7599004b56",
+      "role": "current_supplement"
+    },
+    {
+      "relative_path": "修改记录日志.md",
+      "sha256": "6cf1e4649a4433b61610b7d8710d25dbf98ed0677637ac3c8c540979d14238ec",
+      "role": "current_change_log"
+    }
+  ],
+  "frozen_contracts": {
+    "participants": 8646,
+    "valid_person_days": 57080,
+    "cycle_participants": {
+      "2011-2012": 4284,
+      "2013-2014": 4362
+    },
+    "algorithms": 7,
+    "directed_pairs": 42,
+    "sample_alignment_rows": 21,
+    "exact_knot_rows": 11416,
+    "direction_metadata_rows": 42,
+    "bootstrap_replicates": 300
+  },
+  "released_mapping_resources": [
+    {
+      "package_path": "results/reference/tables/crosswalk_exact_knots.csv",
+      "sha256": "775a590802a91fa8ed1860b58621b74566e4a1f4057fc26a94033cc18c07248a",
+      "data_rows": 11416,
+      "role": "sole_formal_machine_readable_conversion_parameters"
+    },
+    {
+      "package_path": "results/reference/tables/crosswalk_direction_metadata.csv",
+      "sha256": "79513a3e9b0181b3f4a64154fa870764db17b33c06a980b420ebd18817e8edaf",
+      "data_rows": 42,
+      "role": "direction_index_units_support_E_H_and_integrity_metadata"
+    }
+  ],
+  "reference_figures": [
+    {
+      "package_path": "results/reference/figures/Figure4_current.png",
+      "sha256": "5d2a9fcc8d79745246c80e70e757a4ad5631cf6abc86e51e633df6b1215ed46c",
+      "width_pixels": 3729,
+      "height_pixels": 2956,
+      "panels": [
+        "A",
+        "B",
+        "C"
+      ],
+      "source_document": "MSSE_manuscript_v0.25_crosswalk_only_中文.docx",
+      "source_relationship_target": "word/media/image4.png",
+      "English_equivalent_relationship_target": "word/media/image8.png",
+      "status": "visual_reference_pending_release_plot_reimplementation"
+    }
+  ],
+  "aggregate_result_authorities": [
+    {
+      "relative_path": "outputs/tables/stage2_all7_cohort_check.csv",
+      "sha256": "59ab2e3306396596f89fc89855060697e01b0c866302cf32c296927beb476781",
+      "bytes": 565,
+      "data_rows": 7,
+      "module": "cohort"
+    },
+    {
+      "relative_path": "outputs/tables/stage2_all7_distribution.csv",
+      "sha256": "018c445976e27cdefe69eaa18fc1be98e1665204afde8114ba09ce032144d076",
+      "bytes": 3124,
+      "data_rows": 14,
+      "module": "cohort"
+    },
+    {
+      "relative_path": "outputs/tables/stage2_all7_pairwise_agreement.csv",
+      "sha256": "1fa389d861f0c8621f3f5785a04afbcfcad7f77f6c112a7b983b19de8209618b",
+      "bytes": 10789,
+      "data_rows": 42,
+      "module": "core_crosswalk"
+    },
+    {
+      "relative_path": "outputs/tables/stage2_all7_crosswalk_residual_matrix.csv",
+      "sha256": "d22acd0836ea1020eaa4a3ceede36898dcdbd1fe314f319b91819bf2614b46f6",
+      "bytes": 9832,
+      "data_rows": 42,
+      "module": "core_crosswalk"
+    },
+    {
+      "relative_path": "outputs/tables/stage2c_all7_subgroup_counts.csv",
+      "sha256": "3567ab84ab9cd7af94f4dfd903c09b0c54123a39f91d4f8536c7e9121f245f04",
+      "bytes": 3343,
+      "data_rows": 23,
+      "module": "subgroup"
+    },
+    {
+      "relative_path": "outputs/tables/stage2c_all7_subgroup_fullsample_oof_residuals.csv",
+      "sha256": "9b83ac302f54aa3e2b00320400bb20e07f0495ac0d2f0727f614a7ff1bff0e5b",
+      "bytes": 455718,
+      "data_rows": 1260,
+      "module": "subgroup"
+    },
+    {
+      "relative_path": "outputs/tables/stage2c_all7_subgroup_curve_spread.csv",
+      "sha256": "7c967ad5defd4c72fa3807ba52b6dd5d5b05e9d33d24f4c4b560b296bb2f386a",
+      "bytes": 50914,
+      "data_rows": 126,
+      "module": "subgroup"
+    },
+    {
+      "relative_path": "outputs/tables/stage2c_all7_subgroup_curve_grid_daily_headline.csv",
+      "sha256": "00439619d7bb6c2c9863585981cf8cc4575c59615e39008df4179315c263d402",
+      "bytes": 5338152,
+      "data_rows": 33936,
+      "module": "subgroup"
+    },
+    {
+      "relative_path": "outputs/tables/stage3_crosswalk_conversion_population_lookup.csv",
+      "sha256": "926366b6b16e426aefd1891682bc966024e2c25f15a451473e246d4d9f378227",
+      "bytes": 8918,
+      "data_rows": 21,
+      "module": "sample_alignment"
+    },
+    {
+      "relative_path": "outputs/tables/stage3_translatability_map.csv",
+      "sha256": "a3cba96f787cca4ed8713fad053396f0d8a9e69b2196bab55018499eeb1c382a",
+      "bytes": 37932,
+      "data_rows": 42,
+      "module": "E_H_summary_with_legacy_fields"
+    },
+    {
+      "relative_path": "outputs/tables/stage4_crosswalk_uncertainty_ci.csv",
+      "sha256": "ba29309d41ac690e98402678f4349ad8b865926e65cbe7f4e9381e5f10451cda",
+      "bytes": 776095,
+      "data_rows": 2016,
+      "module": "bootstrap"
+    },
+    {
+      "relative_path": "outputs/tables/stage5_table1_baseline_characteristics_weighted.csv",
+      "sha256": "eb311a182626774092940615cf33edc95942f4fc6688fa8920897b0e54ea2999",
+      "bytes": 13494,
+      "data_rows": 62,
+      "module": "table1"
+    },
+    {
+      "relative_path": "outputs/tables/stage6_common_support_subgroup_stability.csv",
+      "sha256": "450e896181a415459178b348d9dfb07658e596943fa1c40abb6ced6456b6628a",
+      "bytes": 210241,
+      "data_rows": 378,
+      "module": "common_support"
+    },
+    {
+      "relative_path": "outputs/tables/stage6_common_support_tier_sensitivity.csv",
+      "sha256": "a959f2261671ded9481f21d71a8ce0660978f93a6234255f83e3f750143466c7",
+      "bytes": 23100,
+      "data_rows": 42,
+      "module": "common_support_summary_with_legacy_name"
+    },
+    {
+      "relative_path": "outputs/tables/stage6_tier_bootstrap_stability.csv",
+      "sha256": "1ecf8fc76335372d143c0aea7599c68c9059eb4c2ff4c74701b779d178b46311",
+      "bytes": 76472,
+      "data_rows": 126,
+      "module": "continuous_bootstrap_sensitivity_with_legacy_name"
+    },
+    {
+      "relative_path": "outputs/tables/stage6_cross_cycle_transport_validation.csv",
+      "sha256": "b6c5f25d4ad8a93b89ba7fbf2bd801f9529db82f375798d1d983bbb7676402ea",
+      "bytes": 46901,
+      "data_rows": 84,
+      "module": "cross_cycle"
+    },
+    {
+      "relative_path": "outputs/tables/stage6_cross_cycle_transport_ci.csv",
+      "sha256": "1c886be7feb864f3148df5850492369991432c068b37ca51e6a1d48c0f89ff4d",
+      "bytes": 334752,
+      "data_rows": 1176,
+      "module": "cross_cycle"
+    },
+    {
+      "relative_path": "outputs/tables/stage6_fixed_threshold_oof_reclassification.csv",
+      "sha256": "21bc2060fcbd5391d2ebd73e5f8d8ce620187ab94cb84d9eb24bc30532966c53",
+      "bytes": 216189,
+      "data_rows": 252,
+      "module": "fixed_threshold"
+    },
+    {
+      "relative_path": "outputs/tables/stage6_fixed_threshold_oof_reclassification_ci.csv",
+      "sha256": "0eca3644637ecff43d4dfd68098ac1c72223e4b66ebdceeb2a19e850002e984a",
+      "bytes": 512259,
+      "data_rows": 1764,
+      "module": "fixed_threshold"
+    },
+    {
+      "relative_path": "写作修改新增代码与配套产物_20260811_20260816/有效日佩戴时长敏感性分析/outputs/wear_threshold_cohort_summary.csv",
+      "sha256": "6d83031df46b5eb65f10926629f1367f7df6ce27d2785f619dd3082491ac1e43",
+      "bytes": 1162,
+      "data_rows": 4,
+      "module": "wear_sensitivity"
+    },
+    {
+      "relative_path": "写作修改新增代码与配套产物_20260811_20260816/有效日佩戴时长敏感性分析/outputs/wear_threshold_pair_metrics.csv",
+      "sha256": "8b57d5b5d492932ff0f8b31b4993bdb66852f94205e93d788b9f2377a087ade9",
+      "bytes": 43085,
+      "data_rows": 126,
+      "module": "wear_sensitivity"
+    },
+    {
+      "relative_path": "写作修改新增代码与配套产物_20260811_20260816/有效日佩戴时长敏感性分析/outputs/wear_threshold_comparison_vs_960.csv",
+      "sha256": "ff4b570de1125758b0053d4da21db3f96bdcd4667556bcbde119e4c0149047c5",
+      "bytes": 18343,
+      "data_rows": 111,
+      "module": "wear_sensitivity"
+    },
+    {
+      "relative_path": "写作修改新增代码与配套产物_20260811_20260816/有效日佩戴时长敏感性分析/outputs/wear_threshold_algorithm_attainment.csv",
+      "sha256": "d655f38374ebec21f16e9faa20a4a171365d482ae9cabab2023e138e1dd978c5",
+      "bytes": 12856,
+      "data_rows": 126,
+      "module": "wear_sensitivity"
+    },
+    {
+      "relative_path": "写作修改新增代码与配套产物_20260811_20260816/有效日佩戴时长敏感性分析/outputs/wear_threshold_fixed_threshold_metrics.csv",
+      "sha256": "ee558dca14be8aaebe388b97d741e88706d4508e55082fa117784b48d01fbb7e",
+      "bytes": 864028,
+      "data_rows": 756,
+      "module": "wear_sensitivity"
+    },
+    {
+      "relative_path": "写作修改新增代码与配套产物_20260811_20260816/有效日佩戴时长敏感性分析/outputs/wear_threshold_cross_cycle_transport.csv",
+      "sha256": "d441bfef16c85ef3530ac366b2dc948b3ce9726933760a56150b3d0d483d7935",
+      "bytes": 173172,
+      "data_rows": 252,
+      "module": "wear_sensitivity"
+    },
+    {
+      "relative_path": "写作修改新增代码与配套产物_20260811_20260816/有效日佩戴时长敏感性分析/outputs/wear_threshold_sensitivity_run.json",
+      "sha256": "ca5556431cdb6042e7fe6e67b3db6967b8c6eb7382967f2273c99e9b60912aeb",
+      "bytes": 13402,
+      "data_rows": null,
+      "module": "wear_sensitivity_run_record"
+    }
+  ]
+}

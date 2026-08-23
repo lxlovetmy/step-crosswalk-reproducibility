@@ -1,0 +1,3 @@
+# Code availability statement draft
+
+The complete analysis code, environment specification, aggregate reference outputs, exact direction-specific isotonic resources, direction metadata, strict converter, automated tests, and one-command reproduction entry point will be archived at **AUTHOR TO COMPLETE: repository/DOI**. Public-use source data are not redistributed; exact source filenames, placement instructions, and SHA-256 checksums are included. The archive reproduces the aggregate tables and figures but not the submitted Word documents. Access date and public-release timing are **AUTHOR TO COMPLETE**.

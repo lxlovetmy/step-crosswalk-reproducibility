@@ -1,0 +1,24 @@
+scope,group_type,group_level,n_subjects,n_person_days,pct_subjects,bmx_bmi_missing_n,note
+cohort_check,overall,per_algorithm_step_person_days,,[130186],,,Each of 7 step files; should be identical.
+cohort_check,overall,per_algorithm_step_subjects,[14693],,,,Each of 7 step files; should be identical.
+cohort_check,overall,seven_way_intersection,14693,130186,,,Person-days present in all 7 step files before Troiano/D9/adult filters.
+cohort_check,overall,troiano_intersect_seven_way,14689,130179,,,Troiano rows intersecting all-7 step person-days; collect_d9_valid_days labels this internally as mvp_step.
+cohort_check,overall,d9_valid_adult_final,8646,57080,1.0,87.0,"Frozen Stage 2c denominator: all-7 step intersection, Troiano D9 main rule, adults >=20."
+algorithm_processing,algorithm,acti,8646,57080,,,Subjects/person-days processed for daily steps after shared D9 valid-day mask.
+algorithm_processing,algorithm,adept,8646,57080,,,Subjects/person-days processed for daily steps after shared D9 valid-day mask.
+algorithm_processing,algorithm,oak,8646,57080,,,Subjects/person-days processed for daily steps after shared D9 valid-day mask.
+algorithm_processing,algorithm,scrf,8646,57080,,,Subjects/person-days processed for daily steps after shared D9 valid-day mask.
+algorithm_processing,algorithm,scssl,8646,57080,,,Subjects/person-days processed for daily steps after shared D9 valid-day mask.
+algorithm_processing,algorithm,vs,8646,57080,,,Subjects/person-days processed for daily steps after shared D9 valid-day mask.
+algorithm_processing,algorithm,vsrev,8646,57080,,,Subjects/person-days processed for daily steps after shared D9 valid-day mask.
+subgroup_count,age_group,20-39,2757,,0.3188757807078418,,Missing rows are counted for residual summaries; missing strata are not fitted as subgroup curves.
+subgroup_count,age_group,40-59,2949,,0.3410825815405968,,Missing rows are counted for residual summaries; missing strata are not fitted as subgroup curves.
+subgroup_count,age_group,60+,2940,,0.3400416377515614,,Missing rows are counted for residual summaries; missing strata are not fitted as subgroup curves.
+subgroup_count,age_group,missing,0,,0.0,,Missing rows are counted for residual summaries; missing strata are not fitted as subgroup curves.
+subgroup_count,sex,male,4161,,0.4812630117973629,,Missing rows are counted for residual summaries; missing strata are not fitted as subgroup curves.
+subgroup_count,sex,female,4485,,0.518736988202637,,Missing rows are counted for residual summaries; missing strata are not fitted as subgroup curves.
+subgroup_count,sex,missing,0,,0.0,,Missing rows are counted for residual summaries; missing strata are not fitted as subgroup curves.
+subgroup_count,bmi_group,<25,2572,,0.2974786028221142,,Missing rows are counted for residual summaries; missing strata are not fitted as subgroup curves.
+subgroup_count,bmi_group,25-<30,2741,,0.3170252139717788,,Missing rows are counted for residual summaries; missing strata are not fitted as subgroup curves.
+subgroup_count,bmi_group,>=30,3246,,0.3754337265787647,,Missing rows are counted for residual summaries; missing strata are not fitted as subgroup curves.
+subgroup_count,bmi_group,missing,87,,0.0100624566273421,87.0,Missing rows are counted for residual summaries; missing strata are not fitted as subgroup curves.

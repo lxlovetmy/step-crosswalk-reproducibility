@@ -1,0 +1,402 @@
+{
+  "status": "RELEASE_CANDIDATE_PASS",
+  "check_count": 79,
+  "failure_count": 0,
+  "checks": [
+    {
+      "name": "cohort_row_count",
+      "status": "PASS",
+      "detail": "generated=7, reference=7"
+    },
+    {
+      "name": "cohort_numeric_reference",
+      "status": "PASS",
+      "detail": "no numeric columns; exact table match=True"
+    },
+    {
+      "name": "algorithm_distribution_row_count",
+      "status": "PASS",
+      "detail": "generated=7, reference=7"
+    },
+    {
+      "name": "algorithm_distribution_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "pairwise_agreement_row_count",
+      "status": "PASS",
+      "detail": "generated=42, reference=42"
+    },
+    {
+      "name": "pairwise_agreement_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "crosswalk_error_row_count",
+      "status": "PASS",
+      "detail": "generated=42, reference=42"
+    },
+    {
+      "name": "crosswalk_error_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "subgroup_counts_row_count",
+      "status": "PASS",
+      "detail": "generated=23, reference=23"
+    },
+    {
+      "name": "subgroup_counts_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "subgroup_oof_row_count",
+      "status": "PASS",
+      "detail": "generated=1260, reference=1260"
+    },
+    {
+      "name": "subgroup_oof_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "subgroup_spread_row_count",
+      "status": "PASS",
+      "detail": "generated=126, reference=126"
+    },
+    {
+      "name": "subgroup_spread_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "subgroup_grid_row_count",
+      "status": "PASS",
+      "detail": "generated=33936, reference=33936"
+    },
+    {
+      "name": "subgroup_grid_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "sample_alignment_row_count",
+      "status": "PASS",
+      "detail": "generated=21, reference=21"
+    },
+    {
+      "name": "sample_alignment_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "exact_knots_row_count",
+      "status": "PASS",
+      "detail": "generated=11416, reference=11416"
+    },
+    {
+      "name": "exact_knots_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "direction_metadata_row_count",
+      "status": "PASS",
+      "detail": "generated=42, reference=42"
+    },
+    {
+      "name": "direction_metadata_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "pair_summary_row_count",
+      "status": "PASS",
+      "detail": "generated=42, reference=42"
+    },
+    {
+      "name": "pair_summary_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "bootstrap_uncertainty_row_count",
+      "status": "PASS",
+      "detail": "generated=2016, reference=2016"
+    },
+    {
+      "name": "bootstrap_uncertainty_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "common_support_detail_row_count",
+      "status": "PASS",
+      "detail": "generated=378, reference=378"
+    },
+    {
+      "name": "common_support_detail_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "common_support_summary_row_count",
+      "status": "PASS",
+      "detail": "generated=42, reference=42"
+    },
+    {
+      "name": "common_support_summary_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "continuous_bootstrap_row_count",
+      "status": "PASS",
+      "detail": "generated=126, reference=126"
+    },
+    {
+      "name": "continuous_bootstrap_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "cross_cycle_row_count",
+      "status": "PASS",
+      "detail": "generated=84, reference=84"
+    },
+    {
+      "name": "cross_cycle_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "cross_cycle_ci_row_count",
+      "status": "PASS",
+      "detail": "generated=1176, reference=1176"
+    },
+    {
+      "name": "cross_cycle_ci_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "fixed_threshold_row_count",
+      "status": "PASS",
+      "detail": "generated=252, reference=252"
+    },
+    {
+      "name": "fixed_threshold_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "fixed_threshold_ci_row_count",
+      "status": "PASS",
+      "detail": "generated=1764, reference=1764"
+    },
+    {
+      "name": "fixed_threshold_ci_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "wear_cohort_row_count",
+      "status": "PASS",
+      "detail": "generated=4, reference=4"
+    },
+    {
+      "name": "wear_cohort_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "wear_pair_row_count",
+      "status": "PASS",
+      "detail": "generated=126, reference=126"
+    },
+    {
+      "name": "wear_pair_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "wear_comparison_row_count",
+      "status": "PASS",
+      "detail": "generated=111, reference=111"
+    },
+    {
+      "name": "wear_comparison_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "wear_attainment_row_count",
+      "status": "PASS",
+      "detail": "generated=126, reference=126"
+    },
+    {
+      "name": "wear_attainment_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "wear_fixed_row_count",
+      "status": "PASS",
+      "detail": "generated=756, reference=756"
+    },
+    {
+      "name": "wear_fixed_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "wear_cross_cycle_row_count",
+      "status": "PASS",
+      "detail": "generated=252, reference=252"
+    },
+    {
+      "name": "wear_cross_cycle_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "cohort_contract",
+      "status": "PASS",
+      "detail": "expected 8,646 participants and 57,080 valid days"
+    },
+    {
+      "name": "sample_alignment_contract",
+      "status": "PASS",
+      "detail": "rows=21"
+    },
+    {
+      "name": "exact_knot_contract",
+      "status": "PASS",
+      "detail": "rows=11416, directions=42, counts_match_metadata=True"
+    },
+    {
+      "name": "direction_metadata_contract",
+      "status": "PASS",
+      "detail": "rows=42, exact_hash=775a590802a91fa8ed1860b58621b74566e4a1f4057fc26a94033cc18c07248a, support_ok=True, flags_ok=True"
+    },
+    {
+      "name": "E_display_contract",
+      "status": "PASS",
+      "detail": "median/range=0.243/0.123-0.402"
+    },
+    {
+      "name": "H_display_contract",
+      "status": "PASS",
+      "detail": "median/range=0.285/0.142-0.546"
+    },
+    {
+      "name": "common_support_detail_contract",
+      "status": "PASS",
+      "detail": "rows=378, expected=378"
+    },
+    {
+      "name": "common_support_summary_contract",
+      "status": "PASS",
+      "detail": "rows=42, expected=42"
+    },
+    {
+      "name": "continuous_bootstrap_contract",
+      "status": "PASS",
+      "detail": "rows=126, expected=126"
+    },
+    {
+      "name": "cross_cycle_contract",
+      "status": "PASS",
+      "detail": "rows=84, expected=84"
+    },
+    {
+      "name": "cross_cycle_ci_contract",
+      "status": "PASS",
+      "detail": "rows=1176, expected=1176"
+    },
+    {
+      "name": "fixed_threshold_contract",
+      "status": "PASS",
+      "detail": "rows=252, expected=252"
+    },
+    {
+      "name": "fixed_threshold_ci_contract",
+      "status": "PASS",
+      "detail": "rows=1764, expected=1764"
+    },
+    {
+      "name": "bootstrap_300_stage4_crosswalk_uncertainty_ci",
+      "status": "PASS",
+      "detail": "requested=[300]"
+    },
+    {
+      "name": "bootstrap_300_stage6_continuous_bootstrap",
+      "status": "PASS",
+      "detail": "requested=[300]"
+    },
+    {
+      "name": "bootstrap_300_stage6_cross_cycle_transport_ci",
+      "status": "PASS",
+      "detail": "requested=[300]"
+    },
+    {
+      "name": "bootstrap_300_stage6_fixed_threshold_oof_reclassification_ci",
+      "status": "PASS",
+      "detail": "requested=[300]"
+    },
+    {
+      "name": "wear_cohort_contract",
+      "status": "PASS",
+      "detail": "observed={960: (8646, 57080), 600: (9023, 60782), 720: (8936, 59845), 1296: (8066, 49564)}"
+    },
+    {
+      "name": "figure4_common_support_display_contract",
+      "status": "PASS",
+      "detail": "exact_lower=42, displayed_lower=41, displayed_unchanged=1, displayed_median=-0.047"
+    },
+    {
+      "name": "main_table_contract",
+      "status": "PASS",
+      "detail": "rows=[22, 7, 9]"
+    },
+    {
+      "name": "supplemental_data_layer",
+      "status": "PASS",
+      "detail": "machine-readable files=18"
+    },
+    {
+      "name": "eight_figure_contract",
+      "status": "PASS",
+      "detail": "valid=8/8"
+    },
+    {
+      "name": "figure4_three_panels",
+      "status": "PASS",
+      "detail": "['A', 'B', 'C']"
+    },
+    {
+      "name": "no_symlinks",
+      "status": "PASS",
+      "detail": "package tree"
+    },
+    {
+      "name": "no_raw_or_word_files",
+      "status": "PASS",
+      "detail": "package inventory"
+    },
+    {
+      "name": "no_private_absolute_paths",
+      "status": "PASS",
+      "detail": "hits=[]"
+    },
+    {
+      "name": "aggregate_only_outputs",
+      "status": "PASS",
+      "detail": "hits=[]"
+    }
+  ]
+}

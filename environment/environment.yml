@@ -1,0 +1,9 @@
+name: step-crosswalk-release
+channels:
+  - conda-forge
+dependencies:
+  - python=3.13.9
+  - pip=25.2
+  - r-base=4.6.0
+  - pip:
+      - -r environment/requirements-lock.txt

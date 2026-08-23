@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "step-crosswalk-reproducibility"
+version = "1.1.1"
+description = "Reproducibility code for direction-specific wrist-step crosswalks"
+requires-python = ">=3.11,<3.14"
+dependencies = [
+  "numpy==2.3.5",
+  "pandas==2.3.3",
+  "scipy==1.16.3",
+  "scikit-learn==1.7.2",
+  "matplotlib==3.10.6",
+  "Pillow==12.0.0",
+  "numba==0.62.1",
+]
+
+[tool.setuptools]
+py-modules = []

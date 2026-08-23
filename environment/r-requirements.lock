@@ -1,0 +1,4 @@
+package	version
+haven	2.5.5
+survey	4.5
+dplyr	1.2.1

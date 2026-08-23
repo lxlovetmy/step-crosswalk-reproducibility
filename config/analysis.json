@@ -1,0 +1,122 @@
+{
+  "schema_version": 3,
+  "project": {
+    "slug": "nhanes_wrist_step_crosswalk",
+    "release_scope": "current_crosswalk_only_manuscript",
+    "target_journal": "Medicine & Science in Sports & Exercise",
+    "word_document_rebuild_required": false
+  },
+  "cohort": {
+    "cycles": [
+      "2011-2012",
+      "2013-2014"
+    ],
+    "minimum_age_years": 20,
+    "main_wear_minutes_per_day": 960,
+    "wear_sensitivity_minutes_per_day": [
+      600,
+      720,
+      1296
+    ],
+    "minimum_valid_days_per_participant": 3,
+    "drop_edge_days": true,
+    "missing_minutes_are_nonwear": true,
+    "expected_participants": 8646,
+    "expected_valid_person_days": 57080,
+    "expected_cycle_participants": {
+      "2011-2012": 4284,
+      "2013-2014": 4362
+    }
+  },
+  "algorithms": [
+    {
+      "code": "acti",
+      "label": "ActiLife"
+    },
+    {
+      "code": "adept",
+      "label": "ADEPT"
+    },
+    {
+      "code": "oak",
+      "label": "Oak"
+    },
+    {
+      "code": "scrf",
+      "label": "Stepcount-RF"
+    },
+    {
+      "code": "scssl",
+      "label": "Stepcount-SSL"
+    },
+    {
+      "code": "vs",
+      "label": "Verisense"
+    },
+    {
+      "code": "vsrev",
+      "label": "Verisense-revised"
+    }
+  ],
+  "sample_alignment": {
+    "reference_algorithm": "oak",
+    "reference_threshold_steps": [
+      7000,
+      8000,
+      10000
+    ],
+    "expected_rows": 21,
+    "interpretation": "sample_marginal_position_alignment_only"
+  },
+  "individual_crosswalk": {
+    "model": "nonnegative_nondecreasing_isotonic_regression",
+    "direction_specific": true,
+    "expected_directed_pairs": 42,
+    "released_source_quantiles": [
+      0.05,
+      0.95
+    ],
+    "canonical_machine_readable_representation": "exact_isotonic_thresholds",
+    "exact_resource_expected_rows": 11416,
+    "direction_index_expected_rows": 42,
+    "word_table_s2_role": "direction_index_and_use_boundaries",
+    "out_of_range_policy": "reject_no_formal_conversion",
+    "oof_folds": 5,
+    "oof_split_unit": "participant",
+    "oof_seed": 20260607
+  },
+  "evaluation": {
+    "primary_metric_E": "participant_grouped_oof_mae_over_target_iqr",
+    "secondary_diagnostic_H": "maximum_full_range_subgroup_p95_spread_over_target_iqr",
+    "subgroup_families": [
+      "age",
+      "sex",
+      "bmi"
+    ],
+    "minimum_subgroup_n": 200,
+    "common_support_definition": "intersection_of_eligible_subgroup_source_p05_p95",
+    "common_support_grids": {
+      "pooled_empirical_nodes": 101,
+      "equally_spaced_nodes": 101
+    },
+    "fixed_target_threshold_steps": [
+      7000,
+      8000,
+      10000
+    ]
+  },
+  "bootstrap": {
+    "method": "stratified_psu_within_stratum_cluster_bootstrap",
+    "primary_mapping_weighting": "unweighted",
+    "fixed_threshold_weighted_sensitivity": "WTMEC4YR",
+    "replicates": 300,
+    "stage4_seed": 20260609,
+    "stage6_seed": 20260715
+  },
+  "forbidden_release_interpretations": [
+    "ground_truth_step_accuracy",
+    "health_threshold_equivalence",
+    "combined_E_H_grade",
+    "conversion_permission_tier"
+  ]
+}

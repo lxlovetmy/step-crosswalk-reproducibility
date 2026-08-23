@@ -1,0 +1,5 @@
+analysis_role,baseline_960_n_subjects,baseline_960_n_subjects_2011_2012_G,baseline_960_n_subjects_2013_2014_H,baseline_960_n_valid_person_days,delta_vs_960_n_subjects,delta_vs_960_n_subjects_2011_2012_G,delta_vs_960_n_subjects_2013_2014_H,delta_vs_960_n_valid_person_days,n_subjects,n_subjects_2011_2012_G,n_subjects_2013_2014_H,n_valid_person_days,pct_delta_vs_960_n_subjects,pct_delta_vs_960_n_subjects_2011_2012_G,pct_delta_vs_960_n_subjects_2013_2014_H,pct_delta_vs_960_n_valid_person_days,wear_threshold
+existing_frozen_main_analysis_baseline_light_cohort_check_only,8646,4284,4362,57080,0,0,0,0,8646,4284,4362,57080,0.0,0.0,0.0,0.0,960
+sensitivity_point_estimate,8646,4284,4362,57080,377,170,207,3702,9023,4454,4569,60782,4.360397871848254,3.968253968253968,4.745529573590097,6.4856341976173795,600
+sensitivity_point_estimate,8646,4284,4362,57080,290,125,165,2765,8936,4409,4527,59845,3.354152209114041,2.917833800186741,3.782668500687758,4.844078486334968,720
+post_hoc_strict_stress_test_point_estimate,8646,4284,4362,57080,-580,-283,-297,-7516,8066,4001,4065,49564,-6.708304418228082,-6.605975723622782,-6.8088033012379645,-13.16748423265592,1296
