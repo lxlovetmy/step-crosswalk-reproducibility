@@ -23,6 +23,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from matplotlib.patches import FancyArrowPatch, Rectangle
+from build_mvp_exposure_qc import spearman_r
 from build_stage2c_all7_subgroup_stability import build_daily_cohort
 from release_common import ALGORITHMS, ALGORITHM_LABELS, DIRECTED_PAIRS
 
@@ -32,9 +33,9 @@ SELECTED = [
     ("oak", "scrf", "Smaller OOF-error example"),
     ("oak", "vsrev", "Smaller OOF-error example"),
     ("scrf", "oak", "Smaller OOF-error example"),
-    ("acti", "oak", "Full-range subgroup-divergence example"),
-    ("vs", "oak", "Full-range subgroup-divergence example"),
-    ("vsrev", "oak", "Full-range subgroup-divergence example"),
+    ("acti", "oak", "P05-P95 subgroup-diagnostic example"),
+    ("vs", "oak", "P05-P95 subgroup-diagnostic example"),
+    ("vsrev", "oak", "P05-P95 subgroup-diagnostic example"),
     ("adept", "oak", "Larger OOF-error example"),
     ("oak", "adept", "Larger OOF-error example"),
     ("scssl", "oak", "Larger OOF-error example"),
@@ -56,7 +57,7 @@ def weighted_quantile(values: np.ndarray, weights: np.ndarray, probabilities: li
     return [float(x[np.searchsorted(cumulative, p * cumulative[-1], side="left")]) for p in probabilities]
 
 
-def read_table1_frame(raw_dir: Path, cohort) -> pd.DataFrame:
+def read_table1_frame(raw_dir: Path, cohort) -> tuple[pd.DataFrame, dict[str, object]]:
     frames = []
     for cycle, suffix in (("nhanes_2011_2012", "G"), ("nhanes_2013_2014", "H")):
         demo = pd.read_sas(raw_dir / cycle / f"DEMO_{suffix}.XPT", format="xport", encoding="latin1")
@@ -65,9 +66,36 @@ def read_table1_frame(raw_dir: Path, cohort) -> pd.DataFrame:
         demo = demo[[column for column in keep if column in demo]].copy()
         frames.append(demo.merge(bmx[["SEQN", "BMXBMI"]], on="SEQN", how="left"))
     frame = pd.concat(frames, ignore_index=True)
+    frame["WTMEC2YR"] = frame["WTMEC2YR"].mask(frame["WTMEC2YR"].abs() < 1e-70)
+    positive_mec_subjects = {
+        str(int(float(value)))
+        for value in frame.loc[frame["WTMEC2YR"].gt(0), "SEQN"]
+    }
+    flow_audit: dict[str, object] = {
+        "positive_mec_weight_subjects": len(positive_mec_subjects),
+        **cohort.sample_flow_counts,
+        "seven_way_not_in_positive_mec_weight_n": len(
+            cohort.seven_way_subject_ids - positive_mec_subjects
+        ),
+    }
+    expected_flow = {
+        "positive_mec_weight_subjects": 19151,
+        "seven_way_subjects": 14693,
+        "seven_way_person_days": 130186,
+        "troiano_intersection_subjects": 14689,
+        "troiano_intersection_person_days": 130179,
+        "valid_wear_subjects_before_adult_filter": 13137,
+        "final_adult_subjects": 8646,
+        "final_valid_person_days": 57080,
+        "seven_way_not_in_positive_mec_weight_n": 0,
+    }
+    if any(flow_audit[key] != expected for key, expected in expected_flow.items()):
+        raise RuntimeError(
+            f"Sample-flow assertion failed: observed={flow_audit}, expected={expected_flow}"
+        )
+    flow_audit["assertion"] = "PASS"
     frame["seqn"] = frame["SEQN"].map(lambda value: str(int(float(value))))
     frame = frame.set_index("seqn").loc[[str(value) for value in cohort.subject_ids]].reset_index()
-    frame["WTMEC2YR"] = frame["WTMEC2YR"].mask(frame["WTMEC2YR"].abs() < 1e-70)
     frame["weight"] = frame["WTMEC2YR"] / 2.0
     frame["oak_daily"] = np.asarray(cohort.daily_by_alg["oak"], dtype=float)
     race = frame["RIDRETH3"].where(frame["RIDRETH3"].notna(), frame["RIDRETH1"])
@@ -77,7 +105,7 @@ def read_table1_frame(raw_dir: Path, cohort) -> pd.DataFrame:
     frame["age_group"] = pd.cut(frame["RIDAGEYR"], [19, 39, 59, np.inf], labels=["20-39", "40-59", "60+"]).astype(object)
     if len(frame) != 8646:
         raise RuntimeError(f"Table 1 cohort alignment failed: {len(frame)}")
-    return frame
+    return frame, flow_audit
 
 
 def table1_rows(frame: pd.DataFrame) -> pd.DataFrame:
@@ -145,7 +173,7 @@ def table3(pair: pd.DataFrame, common: pd.DataFrame, cross: pd.DataFrame, fixed:
             "Source_to_target": f"{ALGORITHM_LABELS[source]} → {ALGORITHM_LABELS[target]}",
             "Illustrative_role": role,
             "OOF_MAE_over_IQR": float(p["E"]),
-            "Full_range_max_spread_over_IQR": float(p["H"]),
+            "Complete_sample_P05_P95_H": float(p["H"]),
             "Common_support_max_spread_over_IQR": float(c["common_support_empirical_H"]),
             "Less_favorable_delta_MAE_over_IQR": float(delta),
             "OOF_discordance_at_8000_pct": float(f["discordant_reclassification_pct"]),
@@ -209,9 +237,10 @@ def figure2(knots: pd.DataFrame, metadata: pd.DataFrame, path: Path) -> None:
 
 
 def figure3(pair: pd.DataFrame, path: Path) -> None:
-    fig, axes = plt.subplots(1, 2, figsize=(15, 6.6))
+    fig, axes = plt.subplots(1, 2, figsize=(17.5, 7.2))
+    fig.subplots_adjust(left=.08, right=.97, bottom=.25, top=.80, wspace=.50)
     labels = [ALGORITHM_LABELS[x] for x in ALGORITHMS]
-    for ax, column, title, vmax in zip(axes, ["E", "H"], ["A  Primary individual error: OOF MAE / target IQR (E)", "B  Full-range subgroup-spread diagnostic (H)"], [.45, .60]):
+    for ax, column, title, vmax in zip(axes, ["E", "H"], ["A  Primary individual error: OOF MAE / target IQR (E)", "B  Complete-sample P05–P95 subgroup diagnostic (H)"], [.45, .60]):
         matrix = np.full((7,7), np.nan)
         for _, row in pair.iterrows(): matrix[ALGORITHMS.index(row.source_algorithm), ALGORITHMS.index(row.target_algorithm)] = float(row[column])
         im = ax.imshow(matrix, vmin=0, vmax=vmax, cmap="viridis")
@@ -220,9 +249,9 @@ def figure3(pair: pd.DataFrame, path: Path) -> None:
             for j in range(7):
                 if i != j:
                     value=matrix[i,j]; ax.text(j,i,f"{value:.2f}",ha="center",va="center",color="white" if value < vmax*.58 else "black",fontsize=8)
-        fig.colorbar(im, ax=ax, fraction=.046, pad=.04)
+        fig.colorbar(im, ax=ax, fraction=.035, pad=.025)
     fig.suptitle("Direction-specific individual error and subgroup-spread diagnostics", fontsize=16)
-    fig.text(.5,.01,"E is primary; H is support-sensitive. Neither defines acceptability.",ha="center",color="dimgray")
+    fig.text(.5,.035,"E is primary; H is support-sensitive. Neither defines acceptability.",ha="center",color="dimgray")
     save_figure(fig, path)
 
 
@@ -248,7 +277,7 @@ def figure4(pair: pd.DataFrame, common: pd.DataFrame, cross: pd.DataFrame, fixed
     ).quantize(quantum, rounding=ROUND_HALF_UP)
     displayed_lower = sum(value < 0 for value in displayed_change)
     ax.text(.03,.96,f"{displayed_lower}/42 below identity; median change = {displayed_median:.3f}",transform=ax.transAxes,va="top")
-    ax.set(title="A  Common-support sensitivity",xlabel="Full-range max spread / target IQR",ylabel="Common-support max spread / target IQR"); ax.grid(alpha=.25)
+    ax.set(title="A  Common-support sensitivity",xlabel="Complete-sample P05–P95 H",ylabel="Common-support H"); ax.grid(alpha=.25)
     ax=fig.add_subplot(gs[0,1]); penalties=cross.groupby(["source_algorithm","target_algorithm"])["transport_penalty_mae_per_target_iqr"].max().sort_values().reset_index(drop=True)
     ax.vlines(np.arange(1,len(penalties)+1),0,penalties,color="#7f3c8d",alpha=.45); ax.scatter(np.arange(1,len(penalties)+1),penalties,color="#7f3c8d",s=22); ax.axhline(0,color="gray",lw=1)
     high=penalties.iloc[-1]; ax.text(.72,.93,f"Highest: {high:.3f}",transform=ax.transAxes); ax.set(title="B  Cross-cycle application penalty",xlabel="Directed-pair rank (lower to higher penalty)",ylabel="Less favorable ΔMAE / target IQR"); ax.grid(axis="y",alpha=.25)
@@ -264,9 +293,9 @@ def figure_s1(cohort, path: Path) -> None:
     fig, axes=plt.subplots(3,7,figsize=(18,9),sharex=True,sharey=True); axes=axes.ravel()
     for ax,(a,b) in zip(axes,combinations(ALGORITHMS,2)):
         x=np.asarray(cohort.daily_by_alg[a]); y=np.asarray(cohort.daily_by_alg[b]); ax.scatter(x,y,s=1,color="black",alpha=.025,rasterized=True)
-        slope,intercept=np.polyfit(x,y,1); xx=np.array([0,50000]); ax.plot(xx,slope*xx+intercept,color="#0072B2"); ax.plot(xx,xx,"--",color="gray"); ax.text(.05,.86,f"r={np.corrcoef(x,y)[0,1]:.2f}",transform=ax.transAxes)
-        ax.set_title(f"{ALGORITHM_LABELS[a]} → {ALGORITHM_LABELS[b]}",fontsize=8); ax.set_xlim(0,50000); ax.set_ylim(0,50000); ax.grid(alpha=.15)
-    fig.suptitle("Subject-level daily step agreement across algorithms",fontsize=16); fig.supxlabel("Source algorithm steps/day"); fig.supylabel("Target algorithm steps/day"); save_figure(fig,path)
+        xx=np.array([0,50000]); ax.plot(xx,xx,"--",color="gray"); rho=spearman_r(x.tolist(),y.tolist()); ax.text(.05,.86,f"Spearman ρ={rho:.2f}",transform=ax.transAxes)
+        ax.set_title(f"{ALGORITHM_LABELS[a]} vs {ALGORITHM_LABELS[b]}",fontsize=8); ax.set_xlim(0,50000); ax.set_ylim(0,50000); ax.grid(alpha=.15)
+    fig.suptitle("Subject-level pairwise relationships across step-count algorithms",fontsize=16); fig.supxlabel("Algorithm A steps/day"); fig.supylabel("Algorithm B steps/day"); save_figure(fig,path)
 
 
 def figure_s2(cohort,path:Path)->None:
@@ -275,13 +304,15 @@ def figure_s2(cohort,path:Path)->None:
     ax.boxplot(values,widths=.22,showfliers=False,patch_artist=True,boxprops={"facecolor":"white","alpha":.85}); ax.set_xticks(range(1,8),[ALGORITHM_LABELS[a] for a in ALGORITHMS],rotation=30,ha="right"); ax.set(title="Individual daily-step distributions by algorithm",ylabel="Subject-level mean daily steps",ylim=(0,50000)); ax.grid(axis="y",alpha=.25); save_figure(fig,path)
 
 
-def figure_s3(path:Path)->None:
-    fig,ax=plt.subplots(figsize=(12,8)); ax.set_xlim(0,12); ax.set_ylim(0,10); ax.axis("off")
-    main=[(1,8.4,7,1,"NHANES 2011–2014 MEC survey-design base with positive examination weights\n(n=19,151)"),(1,5.9,7,1,"Linked wrist-step/wear-source cohort (n=14,689)"),(1,3.4,7,1,"Met the prespecified valid-wear rule (n=13,137)"),(1,0.9,7,1.2,"Final crosswalk cohort: adults aged ≥20 y with all seven series\n(n=8,646; 57,080 valid person-days)")]
-    side=[(8.5,6.9,3,1.15,"Excluded\nNot present in linked source cohort (n=4,462)"),(8.5,4.4,3,1.15,"Excluded\nDid not meet valid-wear rule (n=1,552)"),(8.5,1.9,3,1.15,"Excluded\nAge <20 y (n=4,491)")]
-    for x,y,w,h,t in main+side: ax.add_patch(Rectangle((x,y),w,h,fill=False,lw=1.4)); ax.text(x+w/2,y+h/2,t,ha="center",va="center",fontsize=10)
-    for y in [8.35,5.85,3.35]: ax.add_patch(FancyArrowPatch((4.5,y),(4.5,y-1.35),arrowstyle="-|>",mutation_scale=14,color="black"))
-    for y in [7.45,4.95,2.45]: ax.add_patch(FancyArrowPatch((8,y),(8.5,y),arrowstyle="-|>",mutation_scale=14,color="black"))
+def figure_s3(path:Path, flow:dict[str,object])->None:
+    fig,ax=plt.subplots(figsize=(13.5,10)); ax.set_xlim(0,13.5); ax.set_ylim(0,12); ax.axis("off")
+    mec=int(flow["positive_mec_weight_subjects"]); seven_n=int(flow["seven_way_subjects"]); seven_days=int(flow["seven_way_person_days"]); troiano_n=int(flow["troiano_intersection_subjects"]); troiano_days=int(flow["troiano_intersection_person_days"]); valid_n=int(flow["valid_wear_subjects_before_adult_filter"]); final_n=int(flow["final_adult_subjects"]); final_days=int(flow["final_valid_person_days"])
+    main=[(.4,10.3,8.3,1,f"NHANES 2011–2014 MEC survey-design base with positive examination weights\n(n={mec:,})"),(.4,8.0,8.3,1.1,f"Records shared by all seven released step files\n(n={seven_n:,}; {seven_days:,} participant-days)"),(.4,5.7,8.3,1.1,f"Intersection with the released troianowear series\n(n={troiano_n:,}; {troiano_days:,} participant-days)"),(.4,3.4,8.3,1,f"Met the prespecified valid-wear rule (n={valid_n:,})"),(.4,.9,8.3,1.2,f"Final crosswalk cohort: adults aged ≥20 y with all seven series\n(n={final_n:,}; {final_days:,} valid person-days)")]
+    side=[(9.2,8.9,3.8,1.25,f"Excluded\nNot in all seven step files\n(n={mec-seven_n:,})"),(9.2,6.6,3.8,1.25,f"Excluded\nNot in the troianowear intersection\n(n={seven_n-troiano_n:,}; {seven_days-troiano_days:,} participant-days)"),(9.2,4.3,3.8,1.15,f"Excluded\nDid not meet the valid-wear rule\n(n={troiano_n-valid_n:,})"),(9.2,1.9,3.8,1.15,f"Excluded\nAge <20 y\n(n={valid_n-final_n:,})")]
+    for x,y,w,h,t in main: ax.add_patch(Rectangle((x,y),w,h,fill=False,lw=1.4)); ax.text(x+w/2,y+h/2,t,ha="center",va="center",fontsize=10)
+    for x,y,w,h,t in side: ax.add_patch(Rectangle((x,y),w,h,fill=False,lw=1.4)); ax.text(x+w/2,y+h/2,t,ha="center",va="center",fontsize=9)
+    for start,end in [(10.25,9.15),(7.95,6.85),(5.65,4.45),(3.35,2.15)]: ax.add_patch(FancyArrowPatch((4.5,start),(4.5,end),arrowstyle="-|>",mutation_scale=14,color="black"))
+    for y in [9.55,7.25,4.95,2.45]: ax.add_patch(FancyArrowPatch((8.7,y),(9.2,y),arrowstyle="-|>",mutation_scale=14,color="black"))
     save_figure(fig,path)
 
 
@@ -294,7 +325,7 @@ def figure_s4(subgroup_grid:pd.DataFrame,path:Path)->None:
         for level,color in colors.items():
             g=part.loc[part.group_level.eq(level)].sort_values("source_input"); axes[0,col].plot(g.source_input,g.predicted_target_subgroup,color=color,lw=2,label=level); axes[1,col].plot(g.source_input,g.subgroup_minus_full,color=color,lw=1.7)
         axes[0,col].set_title(f"{ALGORITHM_LABELS[source]} → Oak"); axes[1,col].axhline(0,color="black",ls="--"); axes[0,col].grid(alpha=.25); axes[1,col].grid(alpha=.25)
-    axes[0,0].legend(frameon=False); axes[0,0].set_ylabel("Mapped target steps/day"); axes[1,0].set_ylabel("Subgroup − full sample"); fig.supxlabel("Source input steps/day"); fig.suptitle("Full-range age-group divergence motivating support-restricted sensitivity",fontsize=16); save_figure(fig,path)
+    axes[0,0].legend(frameon=False); axes[0,0].set_ylabel("Mapped target steps/day"); axes[1,0].set_ylabel("Subgroup − full sample"); fig.supxlabel("Source input steps/day"); fig.suptitle("Complete-sample P05–P95 age-group divergence motivating support-restricted sensitivity",fontsize=16); save_figure(fig,path)
 
 
 def copy_publication_tables(generated:Path,publication:Path)->None:
@@ -317,11 +348,13 @@ def copy_publication_tables(generated:Path,publication:Path)->None:
         "TableS6_fixed_threshold_CI.csv":"stage6_fixed_threshold_oof_reclassification_ci.csv",
         "TableS7_bootstrap_uncertainty.csv":"stage4_crosswalk_uncertainty_ci.csv",
         "TableS7_continuous_support_bootstrap.csv":"stage6_continuous_bootstrap.csv",
+        "TableS9_release_domain_whole_cohort.csv":"release_domain_whole_cohort.csv",
+        "TableS9_release_domain_cross_cycle.csv":"release_domain_cross_cycle.csv",
     }
     for public,source in mapping.items(): shutil.copyfile(generated/"tables"/source,publication/public)
     wear=generated/"wear"
     for source in wear.glob("wear_threshold_*.csv"): shutil.copyfile(source,publication/f"TableS8_{source.name}")
-    pd.DataFrame([{"supplemental_table":"S1-S8","file":p.name,"aggregate_only":True} for p in sorted(publication.glob("TableS*.csv"))]).to_csv(publication/"supplemental_table_file_index.csv",index=False)
+    pd.DataFrame([{"supplemental_table":"S1-S9","file":p.name,"aggregate_only":True} for p in sorted(publication.glob("TableS*.csv"))]).to_csv(publication/"supplemental_table_file_index.csv",index=False)
 
 
 def main()->None:
@@ -329,9 +362,9 @@ def main()->None:
     generated=args.generated_dir; tables=generated/"tables"; figures=generated/"figures"; publication=generated/"publication_tables"; figures.mkdir(parents=True,exist_ok=True)
     cohort=build_daily_cohort(args.raw_dir)
     distribution=read(tables/"stage2_all7_distribution.csv"); pair=read(tables/"stage3_translatability_map.csv"); knots=read(tables/"crosswalk_exact_knots.csv"); metadata=read(tables/"crosswalk_direction_metadata.csv"); subgroup_grid=read(tables/"stage2c_all7_subgroup_curve_grid_daily_headline.csv"); common=read(tables/"stage6_common_support_summary.csv"); cross=read(tables/"stage6_cross_cycle_transport_validation.csv"); fixed=read(tables/"stage6_fixed_threshold_oof_reclassification.csv")
-    t1=table1_rows(read_table1_frame(args.raw_dir,cohort)); t2=table2(distribution); t3=table3(pair,common,cross,fixed); publication.mkdir(parents=True,exist_ok=True); t1.to_csv(publication/"main_table1.csv",index=False); t2.to_csv(publication/"main_table2.csv",index=False); t3.to_csv(publication/"main_table3.csv",index=False); copy_publication_tables(generated,publication)
-    figure1(fixed,figures/"Figure1.png"); figure2(knots,metadata,figures/"Figure2.png"); figure3(pair,figures/"Figure3.png"); figure4(pair,common,cross,fixed,figures/"Figure4.png"); figure_s1(cohort,figures/"FigureS1.png"); figure_s2(cohort,figures/"FigureS2.png"); figure_s3(figures/"FigureS3.png"); figure_s4(subgroup_grid,figures/"FigureS4.png")
-    (generated/"logs"/"tables_figures_run.json").write_text(json.dumps({"main_table_rows":[len(t1),len(t2),len(t3)],"supplemental_files":len(list(publication.glob("TableS*.csv"))),"figures":8,"figure4_panels":["A","B","C"],"figure4_common_support_display_rule":"round H and common-support H to 3 decimals before displayed comparison"},indent=2)+"\n",encoding="utf-8")
+    table1_frame,flow_audit=read_table1_frame(args.raw_dir,cohort); t1=table1_rows(table1_frame); t2=table2(distribution); t3=table3(pair,common,cross,fixed); publication.mkdir(parents=True,exist_ok=True); t1.to_csv(publication/"main_table1.csv",index=False); t2.to_csv(publication/"main_table2.csv",index=False); t3.to_csv(publication/"main_table3.csv",index=False); copy_publication_tables(generated,publication)
+    figure1(fixed,figures/"Figure1.png"); figure2(knots,metadata,figures/"Figure2.png"); figure3(pair,figures/"Figure3.png"); figure4(pair,common,cross,fixed,figures/"Figure4.png"); figure_s1(cohort,figures/"FigureS1.png"); figure_s2(cohort,figures/"FigureS2.png"); figure_s3(figures/"FigureS3.png",flow_audit); figure_s4(subgroup_grid,figures/"FigureS4.png")
+    (generated/"logs"/"tables_figures_run.json").write_text(json.dumps({"main_table_rows":[len(t1),len(t2),len(t3)],"supplemental_files":len(list(publication.glob("TableS*.csv"))),"figures":8,"figure4_panels":["A","B","C"],"figure4_common_support_display_rule":"round H and common-support H to 3 decimals before displayed comparison","sample_flow_audit":flow_audit},indent=2)+"\n",encoding="utf-8")
 
 
 if __name__=="__main__": main()

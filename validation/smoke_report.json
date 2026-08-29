@@ -16,5 +16,7 @@
   "direction_metadata_rows": 42,
   "formal_101_node_resource_rows": 0,
   "resource_version": "1.1.1",
-  "note": "After the manuscript, Figure 2, and environment-file revisions, the v1.1.1 unified runner rebuilt the core, subgroup, sample-alignment, exact resource, E/H, and boundary modules from an empty output directory using twelve checksum-verified inputs. Full-only wear, publication-table/figure, and terminal-validator branches remain covered by the controlled formal release-layer report."
+  "historical_scope": "PRE_TABLE_S9_AND_PRE_RELEASE_DOMAIN_AUDIT",
+  "superseded_for_current_release_acceptance_by": "validation/full_run_report.json dated 2026-08-29",
+  "note": "Historical smoke evidence only. It rebuilt the core, subgroup, sample-alignment, exact resource, E/H, and boundary modules from an empty output directory using twelve checksum-verified inputs. The current release-domain audit, Table S9, wear outputs, publication tables/figures, and 91-check terminal validation are covered by the 2026-08-29 full-run report."
 }

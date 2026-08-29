@@ -87,7 +87,7 @@
   },
   "evaluation": {
     "primary_metric_E": "participant_grouped_oof_mae_over_target_iqr",
-    "secondary_diagnostic_H": "maximum_full_range_subgroup_p95_spread_over_target_iqr",
+    "secondary_diagnostic_H": "maximum_complete_sample_source_p05_p95_subgroup_p95_spread_over_target_iqr",
     "subgroup_families": [
       "age",
       "sex",
@@ -112,6 +112,14 @@
     "replicates": 300,
     "stage4_seed": 20260609,
     "stage6_seed": 20260715
+  },
+  "release_domain_audit": {
+    "range": "source_P05_P95_derived_from_training_fold_or_cycle_only",
+    "fit": "complete_training_fold_or_cycle_without_trimming",
+    "whole_cohort_target_iqr": "complete_sample_target_iqr",
+    "cross_cycle_target_iqr": "complete_test_cycle_target_iqr",
+    "bootstrap_replicates": 0,
+    "interpretation": "sensitivity_not_validated_range_or_improvement_test"
   },
   "forbidden_release_interpretations": [
     "ground_truth_step_accuracy",

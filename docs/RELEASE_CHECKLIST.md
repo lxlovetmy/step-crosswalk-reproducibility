@@ -3,7 +3,7 @@
 - [x] Current crosswalk-only scientific scope frozen.
 - [x] Twelve input filenames and SHA-256 values recorded.
 - [x] One-command smoke/full runner implemented.
-- [x] Sample alignment, exact individual mappings, E/H, bootstrap, boundary, wear, table, and figure code included.
+- [x] Sample-flow set assertion, sample alignment, exact individual mappings, E/H, bootstrap, boundary, wear, P05–P95 release-domain audit, table, and figure code included.
 - [x] Exact-threshold converter and 42-row direction metadata/index included.
 - [x] Aggregate numeric and current visual references bundled.
 - [x] No raw data or Word files included.

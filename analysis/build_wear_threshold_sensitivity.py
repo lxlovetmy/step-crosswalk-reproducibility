@@ -630,7 +630,7 @@ def comparison_and_report(cohort_rows: list[dict[str, Any]], pair_rows: list[dic
 
     metric_specs = (
         ("E", "grouped_oof_mae_per_target_iqr", "baseline_960_grouped_oof_mae_per_target_iqr"),
-        ("full-range H", "full_range_h_per_target_iqr", "baseline_960_full_range_h_per_target_iqr"),
+        ("complete-sample P05-P95 H", "full_range_h_per_target_iqr", "baseline_960_full_range_h_per_target_iqr"),
         ("common-support empirical H", "common_support_empirical_h_per_target_iqr", "baseline_960_common_support_empirical_h_per_target_iqr"),
         ("common-support linear H", "common_support_linear_h_per_target_iqr", "baseline_960_common_support_linear_h_per_target_iqr"),
     )

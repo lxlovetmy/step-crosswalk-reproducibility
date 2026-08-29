@@ -21,7 +21,7 @@ class FigureTests(unittest.TestCase):
     def test_figure4_authority(self):
         import hashlib
         path=ROOT/"results"/"reference"/"figures"/"Figure4_current.png"
-        self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(),"5d2a9fcc8d79745246c80e70e757a4ad5631cf6abc86e51e633df6b1215ed46c")
+        self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(),"61e40b23f72343ae0ec8ff4d73bc529e87fb3b8ba76e01fd8a0a520bdde848c3")
 
 
 if __name__ == "__main__": unittest.main()

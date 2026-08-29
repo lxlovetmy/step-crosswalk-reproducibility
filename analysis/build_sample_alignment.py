@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build the 21-row sample-marginal Oak anchor alignment table."""
+"""Build the 21-row empirical marginal-distribution-position lookup."""
 
 from __future__ import annotations
 
@@ -27,7 +27,11 @@ def main() -> None:
         percentile = float(np.mean(oak <= anchor))
         for algorithm in ALGORITHMS:
             values = np.asarray(cohort.daily_by_alg[algorithm], dtype=float)
-            equivalent = anchor if algorithm == "oak" else float(np.quantile(values, percentile))
+            equivalent = (
+                anchor
+                if algorithm == "oak"
+                else float(np.quantile(values, percentile, method="linear"))
+            )
             rows.append(
                 {
                     "reference_algorithm": "oak",
@@ -35,7 +39,7 @@ def main() -> None:
                     "oak_percentile": percentile,
                     "algorithm": algorithm,
                     "equivalent_threshold_steps": equivalent,
-                    "conversion_method": "unweighted_empirical_quantile",
+                    "conversion_method": "unweighted_empirical_quantile_linear_interpolation",
                     "use_case": "sample_marginal_position_alignment_only",
                 }
             )

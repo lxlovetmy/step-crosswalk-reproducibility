@@ -18,6 +18,11 @@ class ContractTests(unittest.TestCase):
         self.assertEqual(config["individual_crosswalk"]["expected_directed_pairs"], 42)
         self.assertEqual(config["individual_crosswalk"]["canonical_machine_readable_representation"], "exact_isotonic_thresholds")
         self.assertEqual(config["bootstrap"]["replicates"], 300)
+        self.assertEqual(config["release_domain_audit"]["bootstrap_replicates"], 0)
+        self.assertEqual(
+            config["release_domain_audit"]["interpretation"],
+            "sensitivity_not_validated_range_or_improvement_test",
+        )
 
     def test_reference_row_contracts(self):
         expected = {
@@ -28,6 +33,8 @@ class ContractTests(unittest.TestCase):
             "common_support_summary.csv": 42, "continuous_bootstrap.csv": 126,
             "cross_cycle.csv": 84, "cross_cycle_ci.csv": 1176,
             "fixed_threshold.csv": 252, "fixed_threshold_ci.csv": 1764,
+            "release_domain_whole_cohort.csv": 42,
+            "release_domain_cross_cycle.csv": 84,
         }
         for name, rows in expected.items():
             with self.subTest(name=name): self.assertEqual(len(pd.read_csv(REF / name)), rows)

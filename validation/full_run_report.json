@@ -1,35 +1,89 @@
 {
   "status": "PASS",
   "release_version": "1.1.1",
-  "validation_strategy": "formal_300_replicate_clean_room_base_plus_controlled_exact_resource_rebuild",
-  "formal_base_started_local": "2026-08-22T07:49:32-07:00",
-  "formal_base_finished_local": "2026-08-22T08:49:09-07:00",
-  "formal_base_wall_time_seconds": 3577,
-  "formal_base_bootstrap_replicates": 300,
-  "formal_base_bootstrap_success": "300/300 for every reported success field",
-  "formal_base_input_hashes_verified": 12,
-  "formal_base_validation": "83/83 PASS",
-  "release_layer_finished_utc": "2026-08-23T04:31:31Z",
-  "release_layer_actions": [
-    "removed the formal 101-node dissemination grid and its fidelity table while retaining the separate 101-point common-support evaluation grids",
-    "rebuilt 11,416 exact isotonic thresholds and 42 direction-metadata rows from the frozen raw inputs",
-    "rebuilt the S2 exact-threshold and direction-index publication files and the exact-knot Figure 2",
-    "updated the unified runner, validator, documentation, tests, and release contracts to the exact-only resource"
-  ],
-  "formal_core_outputs_recomputed_after_release_layer_change": false,
-  "rationale": "The change did not alter cohort construction, participant-grouped OOF models, bootstrap algorithms, seeds, point estimates, intervals, common-support evaluation, cross-cycle evaluation, fixed-threshold analyses, or wear analyses. The already validated 300-replicate outputs were therefore retained; every affected resource, publication, figure, and validation layer was rebuilt and checked.",
-  "validated_output_file_count": 80,
-  "validated_output_bytes": 16897256,
+  "validation_strategy": "fresh_output_directory_full_run_in_current_locked_runtime",
+  "started_utc": "2026-08-29T08:52:41Z",
+  "finished_utc": "2026-08-29T10:06:22Z",
+  "wall_time_seconds_approximate": 4421,
+  "input_hashes_verified": 12,
+  "bootstrap_replicates": 300,
+  "bootstrap_success": {
+    "primary_E_and_complete_sample_P05_P95_H": "300/300",
+    "common_support": "300/300",
+    "cross_cycle_and_fixed_threshold": "300/300"
+  },
+  "release_domain_audit": {
+    "bootstrap_replicates": 0,
+    "whole_cohort_rows": 42,
+    "cross_cycle_rows": 84,
+    "whole_cohort_coverage_percent_range": [
+      89.9144,
+      90.0532
+    ],
+    "whole_cohort_coverage_percent_median": 90.0416,
+    "domain_E_range": [
+      0.1200,
+      0.3984
+    ],
+    "domain_E_median": 0.2377,
+    "domain_minus_global_E_range": [
+      -0.011330,
+      0.003520
+    ],
+    "domain_minus_global_E_median": -0.003419,
+    "cross_cycle_coverage_percent_range": [
+      88.5154,
+      91.1508
+    ],
+    "cross_cycle_coverage_percent_median": 90.0444,
+    "cross_cycle_penalty_range": [
+      -0.006267,
+      0.015437
+    ],
+    "cross_cycle_penalty_median": 0.000294
+  },
+  "sample_flow_set_assertion": {
+    "status": "PASS",
+    "positive_MEC_weight_subjects": 19151,
+    "seven_way_subjects": 14693,
+    "seven_way_person_days": 130186,
+    "troianowear_intersection_subjects": 14689,
+    "troianowear_intersection_person_days": 130179,
+    "valid_wear_subjects_before_adult_filter": 13137,
+    "final_adult_subjects": 8646,
+    "final_valid_person_days": 57080,
+    "seven_way_subjects_not_in_positive_MEC_weight_base": 0
+  },
+  "generated_output_file_count": 86,
+  "generated_output_bytes": 17025437,
   "final_validation_status": "RELEASE_CANDIDATE_PASS",
-  "final_validation_check_count": 79,
+  "final_validation_check_count": 91,
   "final_validation_failure_count": 0,
+  "initial_terminal_validation_attempt": {
+    "status": "BLOCKED",
+    "failure_count": 1,
+    "cause": "The bundled wear-comparison reference retained the obsolete display label full-range H while the regenerated table used complete-sample P05-P95 H.",
+    "numeric_identity_check": "All string fields matched after the one label substitution; maximum absolute numeric difference was 1.45e-14 and no difference exceeded 1e-12.",
+    "resolution": "Synchronized the reference display label and explicit sample-alignment method fields, then reran the terminal validator without rerunning the scientific stages."
+  },
   "exact_knot_rows": 11416,
   "direction_metadata_rows": 42,
   "maximum_exact_reconstruction_error_steps": 0.0,
-  "unit_tests": "16/16 PASS",
+  "unit_tests": "18/18 PASS",
   "real_converter_boundary_checks": "210/210 PASS across 42 directions",
+  "privacy_and_aggregate_only_checks": "PASS",
+  "clean_environment_reinstall": "NOT_RERUN; current locked runtime only",
   "protected_writing_files_modified_under_user_authorization": true,
   "protected_writing_hashes_updated_in_authority_manifest": true,
+  "excluded_extensions_run": false,
+  "excluded_extensions": [
+    "linear baseline",
+    "L1 isotonic regression",
+    "repeated cross-validation",
+    "1000-replicate bootstrap",
+    "external-cohort validation",
+    "PhysioNet v1.0.2 rerun"
+  ],
   "v1_0_0_baseline_archive_retained": true,
   "v1_0_0_archive_sha256": "8ed0437ea27cd39a4cef985fed2fb17814166b47e1b77cd37ffc81b2386ccd23",
   "v1_1_0_archive_retained": true,

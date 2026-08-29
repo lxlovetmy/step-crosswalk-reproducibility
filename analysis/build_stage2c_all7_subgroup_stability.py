@@ -61,6 +61,8 @@ class DailyCohort:
     subjects_n: int
     valid_days_n: int
     subject_ids: np.ndarray
+    seven_way_subject_ids: frozenset[str]
+    sample_flow_counts: dict[str, int]
     daily_by_alg: dict[str, np.ndarray]
     age_group: np.ndarray
     sex: np.ndarray
@@ -203,6 +205,7 @@ def build_daily_cohort(raw_dir: Path) -> DailyCohort:
     seven_way_subjects = {seqn for seqn, _day in seven_way}
 
     minmax_by_seqn = read_day_minmax(troiano_path)
+    troiano_subjects = set(minmax_by_seqn)
     _valid_days_by_subject, final_subjects, final_valid_days, alignment_rows = collect_d9_valid_days(
         troiano_path=troiano_path,
         step_common_keys=seven_way,
@@ -335,6 +338,20 @@ def build_daily_cohort(raw_dir: Path) -> DailyCohort:
         subjects_n=len(final_subjects),
         valid_days_n=len(final_valid_days),
         subject_ids=np.asarray(subjects_sorted, dtype=object),
+        seven_way_subject_ids=frozenset(seven_way_subjects),
+        sample_flow_counts={
+            "seven_way_subjects": len(seven_way_subjects),
+            "seven_way_person_days": len(seven_way),
+            "troiano_intersection_subjects": len(seven_way_subjects & troiano_subjects),
+            "troiano_intersection_person_days": int(
+                align_map.get("troiano_intersect_mvp_step_person_days", 0)
+            ),
+            "valid_wear_subjects_before_adult_filter": int(
+                align_map.get("d9_valid_subjects_before_adult_filter", 0)
+            ),
+            "final_adult_subjects": len(final_subjects),
+            "final_valid_person_days": len(final_valid_days),
+        },
         daily_by_alg=daily_by_alg,
         age_group=np.asarray(age_groups, dtype=object),
         sex=np.asarray(sex_groups, dtype=object),

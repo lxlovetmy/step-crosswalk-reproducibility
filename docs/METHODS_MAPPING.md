@@ -10,7 +10,8 @@ This map records the implemented release entry points. Historical source lineage
 | Direction-specific individual resource (S2) | `analysis/build_stage3_release_assembly.py`, `analysis/build_crosswalk_resource.py` | exact isotonic thresholds and 42-row direction metadata/index |
 | Strict direction-specific converter | `analysis/crosswalk_converter.py` | in-range conversion from exact thresholds with explicit status codes |
 | OOF reproduction error E | `analysis/build_stage2_all7_crosswalk_matrix.py`, `analysis/build_stage3_release_assembly.py` | `tables/stage3_translatability_map.csv` |
-| Full-range and common-support H | `analysis/build_stage2c_all7_subgroup_stability.py`, `analysis/build_stage6_common_support.py` | subgroup and common-support tables |
+| Complete-sample source P05-P95 and common-support H | `analysis/build_stage2c_all7_subgroup_stability.py`, `analysis/build_stage6_common_support.py` | subgroup and common-support tables |
+| Fold/cycle-derived P05-P95 release-domain audit | `analysis/build_release_domain_audit.py` | Table S9 aggregate sensitivity files |
 | E/H uncertainty | `analysis/build_stage4_crosswalk_uncertainty_ci.py` | `tables/stage4_crosswalk_uncertainty_ci.csv` |
 | Cross-cycle and fixed-threshold checks | `analysis/build_stage6_cycle_threshold.py` | cross-cycle and fixed-threshold point/CI tables |
 | Wear-time sensitivity | `analysis/build_wear_threshold_sensitivity.py` | six aggregate wear-threshold tables and a run record |

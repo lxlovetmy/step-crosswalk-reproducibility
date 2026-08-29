@@ -112,6 +112,8 @@ def main() -> int:
         "cross_cycle_ci": (tables / "stage6_cross_cycle_transport_ci.csv", refs / "cross_cycle_ci.csv", None),
         "fixed_threshold": (tables / "stage6_fixed_threshold_oof_reclassification.csv", refs / "fixed_threshold.csv", None),
         "fixed_threshold_ci": (tables / "stage6_fixed_threshold_oof_reclassification_ci.csv", refs / "fixed_threshold_ci.csv", None),
+        "release_domain_whole": (tables / "release_domain_whole_cohort.csv", refs / "release_domain_whole_cohort.csv", None),
+        "release_domain_cross_cycle": (tables / "release_domain_cross_cycle.csv", refs / "release_domain_cross_cycle.csv", None),
         "wear_cohort": (generated / "wear" / "wear_threshold_cohort_summary.csv", refs / "wear_cohort.csv", None),
         "wear_pair": (generated / "wear" / "wear_threshold_pair_metrics.csv", refs / "wear_pair.csv", None),
         "wear_comparison": (generated / "wear" / "wear_threshold_comparison_vs_960.csv", refs / "wear_comparison.csv", None),
@@ -137,6 +139,18 @@ def main() -> int:
     sample = read(tables / "sample_alignment.csv")
     pair = read(tables / "stage3_translatability_map.csv")
     audit.check("sample_alignment_contract", len(sample) == 21, f"rows={len(sample)}")
+    sample_method_ok = (
+        "conversion_method" in sample
+        and sample["conversion_method"].eq(
+            "unweighted_empirical_quantile_linear_interpolation"
+        ).all()
+        and sample["use_case"].eq("sample_marginal_position_alignment_only").all()
+    )
+    audit.check(
+        "sample_alignment_method_contract",
+        bool(sample_method_ok),
+        "explicit linear interpolation and sample-marginal-only use",
+    )
     knots = read(tables / "crosswalk_exact_knots.csv")
     metadata = read(tables / "crosswalk_direction_metadata.csv")
     knot_counts = knots.groupby(["source_algorithm", "target_algorithm"]).size().sort_index()
@@ -197,9 +211,85 @@ def main() -> int:
         "cross_cycle_ci": (tables / "stage6_cross_cycle_transport_ci.csv", 1176),
         "fixed_threshold": (tables / "stage6_fixed_threshold_oof_reclassification.csv", 252),
         "fixed_threshold_ci": (tables / "stage6_fixed_threshold_oof_reclassification_ci.csv", 1764),
+        "release_domain_whole": (tables / "release_domain_whole_cohort.csv", 42),
+        "release_domain_cross_cycle": (tables / "release_domain_cross_cycle.csv", 84),
     }
     for name, (path, expected) in row_contracts.items():
         observed = len(read(path)); audit.check(f"{name}_contract", observed == expected, f"rows={observed}, expected={expected}")
+
+    release_whole = read(tables / "release_domain_whole_cohort.csv")
+    release_cycle = read(tables / "release_domain_cross_cycle.csv")
+    release_pair = release_whole.merge(
+        pair[["source_algorithm", "target_algorithm", "E"]],
+        on=["source_algorithm", "target_algorithm"],
+        validate="one_to_one",
+    )
+    global_e_difference = float(
+        np.max(np.abs(release_pair["global_oof_E"].to_numpy(float) - release_pair["E"].to_numpy(float)))
+    )
+    whole_identity_difference = float(
+        np.max(
+            np.abs(
+                release_whole["release_domain_oof_E"].to_numpy(float)
+                - release_whole["global_oof_E"].to_numpy(float)
+                - release_whole["delta_E_domain_minus_global"].to_numpy(float)
+            )
+        )
+    )
+    cycle_identity_difference = float(
+        np.max(
+            np.abs(
+                release_cycle["transport_release_domain_E"].to_numpy(float)
+                - release_cycle["within_test_oof_release_domain_E"].to_numpy(float)
+                - release_cycle["transport_penalty_E_on_same_covered_test"].to_numpy(float)
+            )
+        )
+    )
+    audit.check(
+        "release_domain_global_E_identity",
+        global_e_difference <= 1e-12,
+        f"max_abs_difference={global_e_difference:.3g}",
+    )
+    audit.check(
+        "release_domain_delta_identities",
+        whole_identity_difference <= 1e-12 and cycle_identity_difference <= 1e-12,
+        f"whole={whole_identity_difference:.3g}, cross_cycle={cycle_identity_difference:.3g}",
+    )
+    release_domain_counts_ok = (
+        release_whole["n_total"].astype(int).eq(8646).all()
+        and release_whole["n_covered"].astype(int).lt(release_whole["n_total"].astype(int)).all()
+        and release_whole["coverage_pct"].astype(float).between(85, 95).all()
+        and set(release_cycle["n_train"].astype(int)) == {4284, 4362}
+        and set(release_cycle["n_test"].astype(int)) == {4284, 4362}
+        and release_cycle["coverage_pct"].astype(float).between(85, 95).all()
+    )
+    audit.check(
+        "release_domain_scope_contract",
+        bool(release_domain_counts_ok),
+        "whole n=8646; cycle n=4284/4362; coverage required within 85%-95%",
+    )
+    release_domain_rules_ok = (
+        release_whole["range_rule"].eq(
+            "inclusive source P05-P95 derived from the training fold only"
+        ).all()
+        and release_whole["fit_rule"].eq(
+            "isotonic fit used the complete training fold without trimming"
+        ).all()
+        and release_cycle["range_rule"].eq(
+            "inclusive source P05-P95 derived from the complete training cycle only"
+        ).all()
+        and release_cycle["fit_rule"].eq(
+            "transport isotonic fit used the complete training cycle without trimming"
+        ).all()
+        and release_cycle["comparison_rule"].eq(
+            "transported and within-test OOF predictions evaluated on identical covered test participants"
+        ).all()
+    )
+    audit.check(
+        "release_domain_design_contract",
+        bool(release_domain_rules_ok),
+        "training-only ranges; untrimmed fits; identical covered cross-cycle comparisons",
+    )
     for path in [tables / "stage4_crosswalk_uncertainty_ci.csv", tables / "stage6_continuous_bootstrap.csv", tables / "stage6_cross_cycle_transport_ci.csv", tables / "stage6_fixed_threshold_oof_reclassification_ci.csv"]:
         frame = read(path)
         requested = pd.to_numeric(frame.get("bootstrap_requested"), errors="coerce")
@@ -243,7 +333,7 @@ def main() -> int:
     main_counts = [len(read(publication / f"main_table{i}.csv")) for i in range(1,4)]
     audit.check("main_table_contract", main_counts == [22,7,9], f"rows={main_counts}")
     supplemental = list(publication.glob("TableS*.csv"))
-    audit.check("supplemental_data_layer", len(supplemental) == 18, f"machine-readable files={len(supplemental)}")
+    audit.check("supplemental_data_layer", len(supplemental) == 20, f"machine-readable files={len(supplemental)}")
     figure_paths = [generated / "figures" / f"Figure{i}.png" for i in range(1,5)] + [generated / "figures" / f"FigureS{i}.png" for i in range(1,5)]
     valid_figures = []
     for path in figure_paths:
@@ -252,6 +342,24 @@ def main() -> int:
     audit.check("eight_figure_contract", len(figure_paths)==8 and all(valid_figures), f"valid={sum(valid_figures)}/8")
     figure_log = json.loads((generated / "logs" / "tables_figures_run.json").read_text())
     audit.check("figure4_three_panels", figure_log.get("figure4_panels") == ["A","B","C"], str(figure_log.get("figure4_panels")))
+    sample_flow = figure_log.get("sample_flow_audit", {})
+    expected_sample_flow = {
+        "positive_mec_weight_subjects": 19151,
+        "seven_way_subjects": 14693,
+        "seven_way_person_days": 130186,
+        "troiano_intersection_subjects": 14689,
+        "troiano_intersection_person_days": 130179,
+        "valid_wear_subjects_before_adult_filter": 13137,
+        "final_adult_subjects": 8646,
+        "final_valid_person_days": 57080,
+        "seven_way_not_in_positive_mec_weight_n": 0,
+        "assertion": "PASS",
+    }
+    audit.check(
+        "sample_flow_set_contract",
+        sample_flow == expected_sample_flow,
+        f"observed={sample_flow}",
+    )
 
     forbidden_extensions = {".docx", ".xpt", ".sav", ".dta", ".sas7bdat"}
     package_files = [path for path in package.rglob("*") if path.is_file()]

@@ -1,6 +1,6 @@
 {
   "status": "RELEASE_CANDIDATE_PASS",
-  "check_count": 79,
+  "check_count": 91,
   "failure_count": 0,
   "checks": [
     {
@@ -204,6 +204,26 @@
       "detail": "max absolute differences=within tolerance"
     },
     {
+      "name": "release_domain_whole_row_count",
+      "status": "PASS",
+      "detail": "generated=42, reference=42"
+    },
+    {
+      "name": "release_domain_whole_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
+      "name": "release_domain_cross_cycle_row_count",
+      "status": "PASS",
+      "detail": "generated=84, reference=84"
+    },
+    {
+      "name": "release_domain_cross_cycle_numeric_reference",
+      "status": "PASS",
+      "detail": "max absolute differences=within tolerance"
+    },
+    {
       "name": "wear_cohort_row_count",
       "status": "PASS",
       "detail": "generated=4, reference=4"
@@ -274,6 +294,11 @@
       "detail": "rows=21"
     },
     {
+      "name": "sample_alignment_method_contract",
+      "status": "PASS",
+      "detail": "explicit linear interpolation and sample-marginal-only use"
+    },
+    {
       "name": "exact_knot_contract",
       "status": "PASS",
       "detail": "rows=11416, directions=42, counts_match_metadata=True"
@@ -329,6 +354,36 @@
       "detail": "rows=1764, expected=1764"
     },
     {
+      "name": "release_domain_whole_contract",
+      "status": "PASS",
+      "detail": "rows=42, expected=42"
+    },
+    {
+      "name": "release_domain_cross_cycle_contract",
+      "status": "PASS",
+      "detail": "rows=84, expected=84"
+    },
+    {
+      "name": "release_domain_global_E_identity",
+      "status": "PASS",
+      "detail": "max_abs_difference=0"
+    },
+    {
+      "name": "release_domain_delta_identities",
+      "status": "PASS",
+      "detail": "whole=1.37e-16, cross_cycle=1.29e-16"
+    },
+    {
+      "name": "release_domain_scope_contract",
+      "status": "PASS",
+      "detail": "whole n=8646; cycle n=4284/4362; coverage required within 85%-95%"
+    },
+    {
+      "name": "release_domain_design_contract",
+      "status": "PASS",
+      "detail": "training-only ranges; untrimmed fits; identical covered cross-cycle comparisons"
+    },
+    {
       "name": "bootstrap_300_stage4_crosswalk_uncertainty_ci",
       "status": "PASS",
       "detail": "requested=[300]"
@@ -366,7 +421,7 @@
     {
       "name": "supplemental_data_layer",
       "status": "PASS",
-      "detail": "machine-readable files=18"
+      "detail": "machine-readable files=20"
     },
     {
       "name": "eight_figure_contract",
@@ -377,6 +432,11 @@
       "name": "figure4_three_panels",
       "status": "PASS",
       "detail": "['A', 'B', 'C']"
+    },
+    {
+      "name": "sample_flow_set_contract",
+      "status": "PASS",
+      "detail": "observed={'positive_mec_weight_subjects': 19151, 'seven_way_subjects': 14693, 'seven_way_person_days': 130186, 'troiano_intersection_subjects': 14689, 'troiano_intersection_person_days': 130179, 'valid_wear_subjects_before_adult_filter': 13137, 'final_adult_subjects': 8646, 'final_valid_person_days': 57080, 'seven_way_not_in_positive_mec_weight_n': 0, 'assertion': 'PASS'}"
     },
     {
       "name": "no_symlinks",

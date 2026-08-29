@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "generated_utc": "2026-08-23T15:42:37Z",
+  "generated_utc": "2026-08-29T10:06:22Z",
   "release_scope": "current_crosswalk_only_manuscript",
   "authority_rule": "Current writing files define scope; listed aggregate artifacts define numeric reference values; historical plans and figures do not override them.",
   "source_project": {
@@ -12,28 +12,36 @@
   "protected_writing_files": [
     {
       "relative_path": "MSSE_manuscript_v0.25_crosswalk_only.docx",
-      "sha256": "3811b5be9ec69752f420d2846ccac477a6152e6f179f0bd50a5f2f4417eaab90",
+      "sha256": "82c1191218bb2d59d14185c8fa317c4a973b34c9c3794b9b12d3a9372867bad4",
       "role": "current_English_manuscript"
     },
     {
       "relative_path": "MSSE_manuscript_v0.25_crosswalk_only_中文.docx",
-      "sha256": "8deedd195b080696686056b096668c872087a75b1d1481870ee6a93f95294db5",
+      "sha256": "62b36394cb08868ece2449823cfe1ada42ccae3540505e0a7daea37405385b95",
       "role": "current_Chinese_manuscript"
     },
     {
       "relative_path": "SDC_v0.20_crosswalk_only.docx",
-      "sha256": "1914a072a5e26f56d4e2c3932c99b4a6581e8876806444eac7631a7599004b56",
+      "sha256": "2c8c5d6507fd6e1c2a2a0fc0cc8e7b12528f1491a00313b53f222c4ec0cb1084",
       "role": "current_supplement"
     },
     {
       "relative_path": "修改记录日志.md",
-      "sha256": "6cf1e4649a4433b61610b7d8710d25dbf98ed0677637ac3c8c540979d14238ec",
+      "sha256": "20c6efec0182d8ff198c1439f025d10c184dab230e3ebd47a9f726f6f1e27b76",
       "role": "current_change_log"
     }
   ],
   "frozen_contracts": {
+    "positive_MEC_weight_subjects": 19151,
+    "seven_way_subjects": 14693,
+    "seven_way_person_days": 130186,
+    "troianowear_intersection_subjects": 14689,
+    "troianowear_intersection_person_days": 130179,
+    "valid_wear_subjects_before_adult_filter": 13137,
     "participants": 8646,
     "valid_person_days": 57080,
+    "seven_way_subjects_not_in_positive_MEC_weight_base": 0,
+    "sample_flow_set_assertion": "PASS",
     "cycle_participants": {
       "2011-2012": 4284,
       "2013-2014": 4362
@@ -43,7 +51,10 @@
     "sample_alignment_rows": 21,
     "exact_knot_rows": 11416,
     "direction_metadata_rows": 42,
-    "bootstrap_replicates": 300
+    "bootstrap_replicates": 300,
+    "release_domain_whole_cohort_rows": 42,
+    "release_domain_cross_cycle_rows": 84,
+    "release_domain_audit_bootstrap_replicates": 0
   },
   "released_mapping_resources": [
     {
@@ -59,21 +70,85 @@
       "role": "direction_index_units_support_E_H_and_integrity_metadata"
     }
   ],
+  "release_domain_audit_tables": [
+    {
+      "package_path": "results/reference/tables/release_domain_whole_cohort.csv",
+      "sha256": "6e5fd2c3fdce88794a0062e28fe9bf8fc8977e1d9496688b437c77d3dc4a4dd5",
+      "bytes": 23575,
+      "data_rows": 42,
+      "bootstrap_replicates": 0,
+      "role": "whole_cohort_P05_P95_release_domain_sensitivity"
+    },
+    {
+      "package_path": "results/reference/tables/release_domain_cross_cycle.csv",
+      "sha256": "58dd56eaaa062e0afd70cdcf169c98746bce07ac6c1b6a68786bb1a4b09d65b0",
+      "bytes": 59943,
+      "data_rows": 84,
+      "bootstrap_replicates": 0,
+      "role": "cross_cycle_P05_P95_release_domain_sensitivity"
+    }
+  ],
   "reference_figures": [
     {
+      "package_path": "results/reference/figures/Figure1_current.png",
+      "sha256": "f3440c3762e2b64de52cf984b95bd4853c5c80482701ef21960952a0088325a3",
+      "width_pixels": 2308,
+      "height_pixels": 1348,
+      "status": "current_visual_reference"
+    },
+    {
+      "package_path": "results/reference/figures/Figure2_current.png",
+      "sha256": "2e3f0a8e2f79779426f6208a42b0edad1bc2dcdef612c829e7e7fe19f19227d1",
+      "width_pixels": 3279,
+      "height_pixels": 1330,
+      "status": "current_visual_reference"
+    },
+    {
+      "package_path": "results/reference/figures/Figure3_current.png",
+      "sha256": "c4b27dc44abf9821bf5203b6731a35f8100f07039085492003ecb8c44fc436c5",
+      "width_pixels": 3450,
+      "height_pixels": 1546,
+      "status": "current_visual_reference"
+    },
+    {
       "package_path": "results/reference/figures/Figure4_current.png",
-      "sha256": "5d2a9fcc8d79745246c80e70e757a4ad5631cf6abc86e51e633df6b1215ed46c",
-      "width_pixels": 3729,
-      "height_pixels": 2956,
+      "sha256": "61e40b23f72343ae0ec8ff4d73bc529e87fb3b8ba76e01fd8a0a520bdde848c3",
+      "width_pixels": 2456,
+      "height_pixels": 2267,
       "panels": [
         "A",
         "B",
         "C"
       ],
-      "source_document": "MSSE_manuscript_v0.25_crosswalk_only_中文.docx",
-      "source_relationship_target": "word/media/image4.png",
-      "English_equivalent_relationship_target": "word/media/image8.png",
-      "status": "visual_reference_pending_release_plot_reimplementation"
+      "status": "current_visual_reference"
+    },
+    {
+      "package_path": "results/reference/figures/FigureS1_current.png",
+      "sha256": "5ea81f0fe0d8db67e5acbedf144f9bf13df801cd8e33869bbe9dacf54ba43693",
+      "width_pixels": 3530,
+      "height_pixels": 1964,
+      "status": "current_visual_reference"
+    },
+    {
+      "package_path": "results/reference/figures/FigureS2_current.png",
+      "sha256": "2c8b940277115842c499306499cda2761a287413f27521bd19c04ba9e8e7a7b8",
+      "width_pixels": 2490,
+      "height_pixels": 1674,
+      "status": "current_visual_reference"
+    },
+    {
+      "package_path": "results/reference/figures/FigureS3_current.png",
+      "sha256": "7c00c05f2c8cacf17af0c4634e3018d4cf25f671ec75dc6013f2d228ab1e3d38",
+      "width_pixels": 2345,
+      "height_pixels": 1737,
+      "status": "current_visual_reference"
+    },
+    {
+      "package_path": "results/reference/figures/FigureS4_current.png",
+      "sha256": "7fe76962992f3aea1b6960e28834f7b0f8d99791a47807f699cbde8b43fd3722",
+      "width_pixels": 2644,
+      "height_pixels": 1751,
+      "status": "current_visual_reference"
     }
   ],
   "aggregate_result_authorities": [

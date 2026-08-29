@@ -1,6 +1,6 @@
 # Step-algorithm crosswalk reproducibility package
 
-Version 1.1.1 release candidate for the crosswalk-only manuscript. The package rebuilds all reported aggregate analyses, three main-table data layers, S1–S8 machine-readable resources, and Figures 1–4/S1–S4 from the twelve frozen public-use inputs. It also exports the exact fitted isotonic thresholds, direction metadata, and a strict converter. It does not rebuild Word files.
+Version 1.1.1 release candidate for the crosswalk-only manuscript. The package rebuilds all reported aggregate analyses, three main-table data layers, S1–S9 machine-readable resources, and Figures 1–4/S1–S4 from the twelve frozen public-use inputs. It also exports the exact fitted isotonic thresholds, direction metadata, and a strict converter. It does not rebuild Word files.
 
 ## Scope and interpretation
 
@@ -34,11 +34,13 @@ The complete run is computationally intensive because it repeats participant-gro
 ## Outputs
 
 - `output/tables/`: full aggregate analysis tables.
-- `output/publication_tables/`: main Tables 1–3 and S1–S8 table-ready files, including the exact-threshold and direction-index resources for S2.
+- `output/publication_tables/`: main Tables 1–3 and S1–S9 table-ready files, including the exact-threshold and direction-index resources for S2.
 - `output/figures/`: Figures 1–4 and S1–S4.
 - `output/wear/`: aggregate wear-threshold sensitivity outputs.
 - `output/tables/crosswalk_exact_knots.csv`: canonical direction-specific mapping parameters.
 - `output/tables/crosswalk_direction_metadata.csv`: units, support, errors, version, and hashes for each direction.
+- `output/tables/release_domain_*.csv`: aggregate fold/cycle-derived source P05–P95 sensitivity results; fitting is not trimmed and the range is not validated.
+- `output/logs/tables_figures_run.json`: aggregate Figure S3 sample-flow counts and the assertion that the seven-series intersection is contained in the positive-MEC-weight base.
 - `output/release_validation.json`: contract and numeric-reference audit.
 
 The package-bundled `results/reference/` directory contains aggregate numeric and visual authorities only. It is never an analysis input.

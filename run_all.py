@@ -56,6 +56,7 @@ def main() -> int:
         ([py, str(ANALYSIS / "build_stage4_crosswalk_uncertainty_ci.py"), "--raw-dir", str(data_root), "--out-dir", str(output), "--bootstrap-reps", reps, "--progress-every", "10"], "E/H bootstrap uncertainty"),
         ([py, str(ANALYSIS / "build_stage6_common_support.py"), "--raw-dir", str(data_root), "--out-dir", str(output), "--bootstrap-reps", reps, "--progress-every", "10"], "common-support sensitivity"),
         ([py, str(ANALYSIS / "build_stage6_cycle_threshold.py"), "--raw-dir", str(data_root), "--out-dir", str(output), "--bootstrap-reps", reps, "--progress-every", "10"], "cross-cycle and fixed-threshold checks"),
+        ([py, str(ANALYSIS / "build_release_domain_audit.py"), "--raw-dir", str(data_root), "--out-dir", str(output)], "P05-P95 release-domain audit"),
     ]
     try:
         for command, label in commands:
