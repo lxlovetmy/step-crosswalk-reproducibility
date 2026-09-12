@@ -28,6 +28,29 @@ def main() -> int:
     parser.add_argument("--output-dir", type=Path, required=True)
     args = parser.parse_args()
     data_root, output = args.data_root.resolve(), args.output_dir.resolve()
+    config = json.loads((PACKAGE_ROOT / "config" / "analysis.json").read_text(encoding="utf-8"))
+    common_grid = config["evaluation"]["common_support_grid"]
+    if common_grid != {"type": "equally_spaced", "nodes": 101}:
+        raise RuntimeError(f"Unsupported common-support grid contract: {common_grid}")
+    if config["evaluation"].get("common_support_curve_fitting") != (
+        "one_full_resample_fit_per_eligible_subgroup_reused_for_complete_and_common_support_H"
+    ):
+        raise RuntimeError("Unsupported common-support curve-fitting contract.")
+    if int(config["evaluation"]["minimum_subgroup_n"]) != 200:
+        raise RuntimeError("The release requires at least 200 participants per eligible subgroup.")
+    if (
+        int(config["individual_crosswalk"]["oof_folds"]) != 5
+        or config["individual_crosswalk"]["oof_split_unit"] != "participant"
+        or int(config["individual_crosswalk"]["oof_seed"]) != 20260607
+    ):
+        raise RuntimeError("Configured OOF design differs from the frozen release contract.")
+    if int(config["bootstrap"]["replicates"]) != 300:
+        raise RuntimeError("The full release requires exactly 300 bootstrap replicates.")
+    if (
+        int(config["bootstrap"]["stage4_seed"]) != 20260609
+        or int(config["bootstrap"]["stage6_seed"]) != 20260715
+    ):
+        raise RuntimeError("Configured bootstrap seeds differ from the frozen release contract.")
     if output == PACKAGE_ROOT or PACKAGE_ROOT in output.parents:
         parser.error("--output-dir must be outside the package")
     if output.exists() and any(output.iterdir()):
@@ -45,7 +68,9 @@ def main() -> int:
     env["PYTHONDONTWRITEBYTECODE"] = "1"
     env["MPLCONFIGDIR"] = str(output / ".mplconfig")
     py = sys.executable
-    reps = "2" if args.mode == "smoke" else "300"
+    reps = "2" if args.mode == "smoke" else str(int(config["bootstrap"]["replicates"]))
+    stage4_seed = str(int(config["bootstrap"]["stage4_seed"]))
+    stage6_seed = str(int(config["bootstrap"]["stage6_seed"]))
 
     commands = [
         ([py, str(ANALYSIS / "build_stage2_all7_crosswalk_matrix.py"), "--raw-dir", str(data_root), "--out-dir", str(output)], "core crosswalk matrix"),
@@ -53,9 +78,9 @@ def main() -> int:
         ([py, str(ANALYSIS / "build_sample_alignment.py"), "--raw-dir", str(data_root), "--out-dir", str(output)], "sample alignment"),
         ([py, str(ANALYSIS / "build_stage3_release_assembly.py"), "--out-dir", str(output)], "direction-level E/H assembly"),
         ([py, str(ANALYSIS / "build_crosswalk_resource.py"), "--raw-dir", str(data_root), "--out-dir", str(output), "--resource-version", "1.1.1"], "exact crosswalk mappings and direction metadata"),
-        ([py, str(ANALYSIS / "build_stage4_crosswalk_uncertainty_ci.py"), "--raw-dir", str(data_root), "--out-dir", str(output), "--bootstrap-reps", reps, "--progress-every", "10"], "E/H bootstrap uncertainty"),
-        ([py, str(ANALYSIS / "build_stage6_common_support.py"), "--raw-dir", str(data_root), "--out-dir", str(output), "--bootstrap-reps", reps, "--progress-every", "10"], "common-support sensitivity"),
-        ([py, str(ANALYSIS / "build_stage6_cycle_threshold.py"), "--raw-dir", str(data_root), "--out-dir", str(output), "--bootstrap-reps", reps, "--progress-every", "10"], "cross-cycle and fixed-threshold checks"),
+        ([py, str(ANALYSIS / "build_stage4_crosswalk_uncertainty_ci.py"), "--raw-dir", str(data_root), "--out-dir", str(output), "--bootstrap-reps", reps, "--seed", stage4_seed, "--progress-every", "10"], "E/H bootstrap uncertainty"),
+        ([py, str(ANALYSIS / "build_stage6_common_support.py"), "--raw-dir", str(data_root), "--out-dir", str(output), "--bootstrap-reps", reps, "--seed", stage6_seed, "--progress-every", "10"], "common-support sensitivity"),
+        ([py, str(ANALYSIS / "build_stage6_cycle_threshold.py"), "--raw-dir", str(data_root), "--out-dir", str(output), "--bootstrap-reps", reps, "--seed", stage6_seed, "--progress-every", "10"], "cross-cycle and fixed-threshold checks"),
         ([py, str(ANALYSIS / "build_release_domain_audit.py"), "--raw-dir", str(data_root), "--out-dir", str(output)], "P05-P95 release-domain audit"),
     ]
     try:

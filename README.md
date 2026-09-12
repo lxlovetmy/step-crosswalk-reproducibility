@@ -1,10 +1,10 @@
 # Step-algorithm crosswalk reproducibility package
 
-Version 1.1.1 release candidate for the crosswalk-only manuscript. The package rebuilds all reported aggregate analyses, three main-table data layers, S1–S9 machine-readable resources, and Figures 1–4/S1–S4 from the twelve frozen public-use inputs. It also exports the exact fitted isotonic thresholds, direction metadata, and a strict converter. It does not rebuild Word files.
+Version 1.1.1 reproducibility release for the crosswalk-only manuscript. The package rebuilds all reported aggregate analyses, three main-table data layers, S1–S9 machine-readable resources, and Figures 1–4/S1–S4 from the twelve frozen public-use inputs. It also exports the exact fitted isotonic thresholds, direction metadata, and a strict converter. It does not rebuild Word files.
 
 ## Scope and interpretation
 
-The analysis covers 8,646 NHANES 2011–2014 adults (57,080 valid person-days), seven wrist-step algorithms, a 21-row sample-marginal alignment lookup, and 42 separately fitted direction-specific isotonic crosswalks. Exact fitted thresholds are the sole formal machine-readable conversion parameters; the 42-row direction metadata file supplies labels, source P05–P95 use ranges, knot counts, E/H evidence, and integrity fields. E is participant-grouped out-of-fold target-output reproduction error; H is a support-sensitive subgroup-spread diagnostic. Neither is accuracy against true steps, a clinical threshold, or an acceptability grade.
+The analysis covers 8,646 NHANES 2011–2014 adults (57,080 valid person-days), seven wrist-step algorithms, a 21-row sample-marginal alignment lookup, and 42 separately fitted direction-specific isotonic crosswalks. Exact fitted thresholds are the sole formal machine-readable conversion parameters; the 42-row direction metadata file supplies labels, source P05–P95 use ranges, knot counts, E/H evidence, and integrity fields. E is participant-grouped out-of-fold target-output reproduction error; H is a support-sensitive subgroup-spread diagnostic. Eligible nonmissing subgroups require at least 200 participants. Complete-sample H evaluates full-data eligible-subgroup isotonic curves on the complete-sample source P05–P95 grid. Common-support H reuses those same fitted subgroup curves and changes only the evaluation grid to 101 equally spaced points within the intersection of eligible subgroup source P05–P95 intervals. Neither is accuracy against true steps, a clinical threshold, or an acceptability grade.
 
 Historical metabolic, ROC/AUC, Tier, 20/20/2, and manuscript-migration branches are deliberately excluded.
 
@@ -29,7 +29,7 @@ The runner first verifies all twelve SHA-256 values. Reference tables are read o
 
        python run_all.py --mode smoke --data-root /path/to/data/raw --output-dir /path/to/empty/smoke-output
 
-The complete run is computationally intensive because it repeats participant-grouped cross-fitting inside 300 stratified PSU-within-stratum cluster bootstrap samples. The primary mapping remains unweighted; this is not a fully weighted design-based population estimator.
+The complete run is computationally intensive because it repeats participant-grouped OOF evaluation and full-resample subgroup fitting inside 300 stratified PSU-within-stratum cluster bootstrap samples. Five-fold subject grouping is used for E, fixed-threshold, and cross-cycle OOF evaluations; it is not used to ensemble common-support curves. The primary mapping remains unweighted; this is not a fully weighted design-based population estimator.
 
 ## Outputs
 
@@ -39,6 +39,7 @@ The complete run is computationally intensive because it repeats participant-gro
 - `output/wear/`: aggregate wear-threshold sensitivity outputs.
 - `output/tables/crosswalk_exact_knots.csv`: canonical direction-specific mapping parameters.
 - `output/tables/crosswalk_direction_metadata.csv`: units, support, errors, version, and hashes for each direction.
+- `output/tables/stage6_common_support_summary.csv`: 42 directions with complete-sample H and the single 101-point equally spaced common-support H definition.
 - `output/tables/release_domain_*.csv`: aggregate fold/cycle-derived source P05–P95 sensitivity results; fitting is not trimmed and the range is not validated.
 - `output/logs/tables_figures_run.json`: aggregate Figure S3 sample-flow counts and the assertion that the seven-series intersection is contained in the positive-MEC-weight base.
 - `output/release_validation.json`: contract and numeric-reference audit.

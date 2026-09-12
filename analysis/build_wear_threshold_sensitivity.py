@@ -237,7 +237,7 @@ def load_pipeline() -> dict[str, Any]:
     if int(mvp.D9_MIN_VALID_DAYS) != 3:
         raise Blocked("Frozen minimum valid-day count differs from 3.")
     if int(support.FOLDS) != 5 or int(cycle.FOLDS) != 5:
-        raise Blocked("Frozen five-fold definition is unavailable.")
+        raise Blocked("Frozen five-fold subject-grouped OOF definition is unavailable.")
     if int(support.STAGE2_RANDOM_SEED) != 20260607 or int(cycle.CROSSWALK_SEED) != 20260607:
         raise Blocked("Frozen crosswalk seed differs from 20260607.")
     return {"mvp": mvp, "stage2": stage2, "stage2c": stage2c, "support": support, "cycle": cycle}
@@ -284,12 +284,6 @@ def h_reason_for_pair(cohort: Any, sample_idx: np.ndarray, source: str, support:
         if not (support.finite(low) and support.finite(high) and low < high):
             reasons.append(f"{group_type}:NONPOSITIVE_COMMON_SUPPORT")
             continue
-        level_union = np.zeros(len(x), dtype=bool)
-        for _level, mask, _n in levels:
-            level_union |= mask
-        if int(np.sum(level_union & (x >= low) & (x <= high))) < support.GRID_N:
-            reasons.append(f"{group_type}:COMMON_N_LT_{support.GRID_N}")
-            continue
         return "ESTIMATED"
     return ";".join(reasons) if reasons else "NOT_ESTIMABLE_UNSPECIFIED"
 
@@ -301,13 +295,11 @@ def pair_metric_row(threshold: int, computation: Any, baseline: dict[str, Any], 
     metric_values = {
         "grouped_oof_mae_per_target_iqr": float(computation.mae_per_target_iqr),
         "full_range_h_per_target_iqr": float(computation.spread_by_definition[support.ORIGINAL_DEFINITION]),
-        "common_support_empirical_h_per_target_iqr": float(computation.spread_by_definition[support.COMMON_EMPIRICAL_DEFINITION]),
         "common_support_linear_h_per_target_iqr": float(computation.spread_by_definition[support.COMMON_LINEAR_DEFINITION]),
     }
     baseline_values = {
         "grouped_oof_mae_per_target_iqr": as_float(stage3["mae_per_target_iqr"]),
         "full_range_h_per_target_iqr": as_float(stage3["max_subgroup_p95_spread_over_target_iqr"]),
-        "common_support_empirical_h_per_target_iqr": as_float(common["common_support_empirical_H"]),
         "common_support_linear_h_per_target_iqr": as_float(common["common_support_linear_H"]),
     }
     row: dict[str, Any] = {
@@ -318,10 +310,8 @@ def pair_metric_row(threshold: int, computation: Any, baseline: dict[str, Any], 
         "target_iqr": numeric_or_na(float(computation.target_iqr)),
         **{column: numeric_or_na(value) for column, value in metric_values.items()},
         "full_range_h_driver": computation.driver_by_definition[support.ORIGINAL_DEFINITION] or "NA",
-        "common_support_empirical_h_driver": computation.driver_by_definition[support.COMMON_EMPIRICAL_DEFINITION] or "NA",
         "common_support_linear_h_driver": computation.driver_by_definition[support.COMMON_LINEAR_DEFINITION] or "NA",
         "full_range_h_reason": "ESTIMATED" if finite(metric_values["full_range_h_per_target_iqr"]) else h_reason_for_pair(cohort, all_idx, computation.source, support, support.ORIGINAL_DEFINITION),
-        "common_support_empirical_h_reason": "ESTIMATED" if finite(metric_values["common_support_empirical_h_per_target_iqr"]) else h_reason_for_pair(cohort, all_idx, computation.source, support, support.COMMON_EMPIRICAL_DEFINITION),
         "common_support_linear_h_reason": "ESTIMATED" if finite(metric_values["common_support_linear_h_per_target_iqr"]) else h_reason_for_pair(cohort, all_idx, computation.source, support, support.COMMON_LINEAR_DEFINITION),
     }
     for column, value in metric_values.items():
@@ -613,6 +603,8 @@ def comparison_and_report(cohort_rows: list[dict[str, Any]], pair_rows: list[dic
         "- 960 分钟：既有冻结主分析基线；本次仅完成参数化队列一致性校验，未重算其 E/H、固定阈值、transport 或 bootstrap。",
         "- 新门槛：600、720 分钟为既有宽松敏感性点；1296 分钟为 post hoc strict stress test，均不替代 960 分钟主分析。",
         "- 未运行 bootstrap 或置信区间重算；所有表仅含聚合结果。",
+        "- E、固定阈值 OOF 和跨周期比较保留五折 subject-grouped OOF；五折不用于共同覆盖曲线集成。",
+        "- 共同覆盖 H 使用全数据合格子群保序曲线，并在共同覆盖区间内使用 101 个等距评价点。",
         "",
         "## 队列规模",
         "",
@@ -631,8 +623,7 @@ def comparison_and_report(cohort_rows: list[dict[str, Any]], pair_rows: list[dic
     metric_specs = (
         ("E", "grouped_oof_mae_per_target_iqr", "baseline_960_grouped_oof_mae_per_target_iqr"),
         ("complete-sample P05-P95 H", "full_range_h_per_target_iqr", "baseline_960_full_range_h_per_target_iqr"),
-        ("common-support empirical H", "common_support_empirical_h_per_target_iqr", "baseline_960_common_support_empirical_h_per_target_iqr"),
-        ("common-support linear H", "common_support_linear_h_per_target_iqr", "baseline_960_common_support_linear_h_per_target_iqr"),
+        ("common-support H (101-point equally spaced grid)", "common_support_linear_h_per_target_iqr", "baseline_960_common_support_linear_h_per_target_iqr"),
     )
     lines.extend(["", "## 连续换算（42 个有向 pair）相对 960", "", "| 指标 | 门槛 | 中位数 [IQR] | 范围 | Spearman 排序相关 | 绝对变化中位数 / 最大值 | NA |", "|---|---:|---:|---:|---:|---:|---:|"])
     for label, current_column, baseline_column in metric_specs:
@@ -696,7 +687,7 @@ def comparison_and_report(cohort_rows: list[dict[str, Any]], pair_rows: list[dic
         comparisons.append({"wear_threshold": threshold, "section": "transport_penalty_summary", "metric": "transport_penalty_mae_per_target_iqr", "median": numeric_or_na(stat["median"]), "minimum": numeric_or_na(stat["minimum"]), "maximum": numeric_or_na(stat["maximum"]), "median_absolute_change_vs_960": numeric_or_na(change["median"]), "maximum_absolute_change_vs_960": numeric_or_na(change["maximum"]), "spearman_vs_960": numeric_or_na(rho)})
         lines.append(f"| {threshold} | {fmt(stat['median'])} [{fmt(stat['minimum'])}, {fmt(stat['maximum'])}] | {fmt(change['median'])} / {fmt(change['maximum'])} | {fmt(rho)} |")
 
-    pair_na = {threshold: sum(not finite(row["full_range_h_per_target_iqr"]) or not finite(row["common_support_empirical_h_per_target_iqr"]) or not finite(row["common_support_linear_h_per_target_iqr"]) for row in pair_rows if int(row["wear_threshold"]) == threshold) for threshold in EXPECTED_THRESHOLDS}
+    pair_na = {threshold: sum(not finite(row["full_range_h_per_target_iqr"]) or not finite(row["common_support_linear_h_per_target_iqr"]) for row in pair_rows if int(row["wear_threshold"]) == threshold) for threshold in EXPECTED_THRESHOLDS}
     lines.extend(["", "## 可估计性与解释边界", "", f"- 任一 H 指标为 NA 的 pair 数：600={pair_na[600]}，720={pair_na[720]}，1296={pair_na[1296]}；对应机器可读原因位于 pair metrics 表中。", "- 本报告只描述实际点估计的范围、变化和排序一致性；未计算 p 值、置信区间或预设可接受性界限。", "- population attainment 对齐不等同于 individual conversion；结果不指定任何算法为真实步数或金标准。", ""])
     return comparisons, "\n".join(lines)
 
@@ -801,6 +792,10 @@ def main() -> None:
         "thresholds_completed": list(EXPECTED_THRESHOLDS),
         "baseline_threshold": BASELINE_THRESHOLD,
         "baseline_light_cohort_check": {"n_subjects": 8646, "n_valid_person_days": 57080},
+        "oof_definition": "five-fold subject-grouped OOF retained for E, fixed-threshold, and cross-cycle evaluation; not used for common-support curve construction",
+        "common_support_definition": "common_support_linear",
+        "common_support_curve_estimator": "full-data eligible subgroup isotonic; same fitted subgroup curve as complete-sample H",
+        "common_support_grid": "101-point equally spaced grid within the common-support interval",
         "bootstrap_recomputed": False,
         "manuscript_modified": False,
         "source_project_modified": False,

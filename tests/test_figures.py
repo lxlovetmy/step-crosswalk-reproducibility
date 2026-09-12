@@ -1,3 +1,5 @@
+import csv
+import hashlib
 import unittest
 from pathlib import Path
 
@@ -19,9 +21,13 @@ class FigureTests(unittest.TestCase):
         self.assertFalse((ROOT/"results"/"reference"/"figures"/"FigureS5_current.png").exists())
 
     def test_figure4_authority(self):
-        import hashlib
         path=ROOT/"results"/"reference"/"figures"/"Figure4_current.png"
-        self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(),"61e40b23f72343ae0ec8ff4d73bc529e87fb3b8ba76e01fd8a0a520bdde848c3")
+        manifest = ROOT / "provenance" / "reference_manifest.csv"
+        with manifest.open(newline="", encoding="utf-8") as handle:
+            rows = list(csv.DictReader(handle))
+        row = next(item for item in rows if item["relative_path"] == "results/reference/figures/Figure4_current.png")
+        self.assertEqual(hashlib.sha256(path.read_bytes()).hexdigest(), row["sha256"])
+        self.assertEqual(path.stat().st_size, int(row["bytes"]))
 
 
 if __name__ == "__main__": unittest.main()

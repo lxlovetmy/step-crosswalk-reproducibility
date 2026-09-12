@@ -35,21 +35,21 @@ class NumericReferenceTests(unittest.TestCase):
         pair = pd.read_csv(REF / "pair_summary.csv")
         common = pd.read_csv(REF / "common_support_summary.csv")
         frame = pair[["source_algorithm", "target_algorithm", "H"]].merge(
-            common[["source_algorithm", "target_algorithm", "common_support_empirical_H"]],
+            common[["source_algorithm", "target_algorithm", "common_support_linear_H"]],
             on=["source_algorithm", "target_algorithm"],
         )
-        exact = frame.common_support_empirical_H.to_numpy(float) - frame.H.to_numpy(float)
+        exact = frame.common_support_linear_H.to_numpy(float) - frame.H.to_numpy(float)
         quantum = Decimal("0.001")
         displayed = [
             Decimal(str(float(common_value))).quantize(quantum, rounding=ROUND_HALF_UP)
             - Decimal(str(float(full_value))).quantize(quantum, rounding=ROUND_HALF_UP)
-            for common_value, full_value in zip(frame.common_support_empirical_H, frame.H)
+            for common_value, full_value in zip(frame.common_support_linear_H, frame.H)
         ]
         ordered = sorted(displayed)
         midpoint = len(ordered) // 2
         median = ((ordered[midpoint - 1] + ordered[midpoint]) / Decimal(2)).quantize(quantum, rounding=ROUND_HALF_UP)
-        self.assertEqual(((exact < 0).sum(), sum(x < 0 for x in displayed), sum(x == 0 for x in displayed)), (42, 41, 1))
-        self.assertEqual(median, Decimal("-0.047"))
+        self.assertEqual(((exact < 0).sum(), sum(x < 0 for x in displayed), sum(x == 0 for x in displayed), sum(x > 0 for x in displayed)), (33, 32, 6, 4))
+        self.assertEqual(median, Decimal("-0.024"))
 
 
 if __name__ == "__main__": unittest.main()

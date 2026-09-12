@@ -49,7 +49,9 @@ ALL_METHODS = [HEADLINE_METHOD, *ROBUSTNESS_METHODS]
 FOLDS = 5
 RANDOM_SEED = 20260607
 FIXED_STEP_THRESHOLDS = [7000.0, 8000.0, 10000.0]
-MIN_SUBGROUP_CURVE_N = 100
+# The manuscript and release configuration define eligible nonmissing
+# subgroups as those containing at least 200 participants.
+MIN_SUBGROUP_CURVE_N = 200
 
 
 class CrosswalkModel(Protocol):

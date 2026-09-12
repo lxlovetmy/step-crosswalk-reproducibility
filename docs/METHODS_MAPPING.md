@@ -24,7 +24,8 @@ This map records the implemented release entry points. Historical source lineage
 1. Input hashes are verified before analysis; bundled references are opened only by the terminal validator.
 2. Sample-level marginal alignment is distinct from direction-specific individual prediction.
 3. Source-to-target and target-to-source models are fitted separately; inverse symmetry is never assumed.
-4. Full-sample fits generate the exact released mappings. Supplemental Table S2 is a 42-direction index and use-boundary table; formal conversion uses only the exact fitted thresholds. Participant-grouped OOF predictions evaluate E and fixed-threshold consequences.
+4. Full-sample fits generate the exact released mappings. Supplemental Table S2 is a 42-direction index and use-boundary table; formal conversion uses only the exact fitted thresholds. Participant-grouped five-fold OOF predictions evaluate E and fixed-threshold consequences.
 5. E remains the primary target-output reproduction error; H remains a support-sensitive subgroup diagnostic. They are not combined into a grade.
 6. Only aggregate tables, mapping nodes, figures, and run records are written. Participant, day, minute, fold, OOF-person, and replicate rows are not released.
-7. Figure 4 uses exact values for plotting and the manuscript's three-decimal direction-level display convention for its 41-lower/1-unchanged, median -0.047 annotation; both the exact and displayed counts are tested.
+7. Eligible nonmissing subgroups require at least 200 participants. Common-support H uses the same full-data eligible-subgroup isotonic curves as complete-sample H. It changes only the evaluation grid to 101 equally spaced points in the intersection of eligible subgroup source P05–P95 intervals; observed density within a valid intersection does not change those coordinates, and the method never uses a fold-averaged curve or empirical-quantile grid.
+8. Figure 4 uses exact values for plotting and the manuscript's three-decimal direction-level display convention for its 32-lower/6-unchanged/4-higher, median -0.024 annotation; the displayed counts are tested.

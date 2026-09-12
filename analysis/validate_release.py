@@ -16,6 +16,8 @@ import numpy as np
 import pandas as pd
 from PIL import Image
 
+from release_common import ALGORITHM_LABELS
+
 
 KEYS = [
     "source_algorithm", "target_algorithm", "algorithm", "reference_threshold_steps",
@@ -90,6 +92,27 @@ def main() -> int:
     package, generated = args.package_root.resolve(), args.generated_dir.resolve()
     refs, tables = package / "results" / "reference" / "tables", generated / "tables"
     audit = Audit()
+    config = json.loads((package / "config" / "analysis.json").read_text(encoding="utf-8"))
+    config_contract_ok = (
+        config.get("schema_version") == 4
+        and config["individual_crosswalk"].get("oof_folds") == 5
+        and config["individual_crosswalk"].get("oof_split_unit") == "participant"
+        and config["individual_crosswalk"].get("oof_seed") == 20260607
+        and config["evaluation"].get("minimum_subgroup_n") == 200
+        and config["evaluation"].get("common_support_grid")
+        == {"type": "equally_spaced", "nodes": 101}
+        and config["evaluation"].get("common_support_curve_fitting")
+        == "one_full_resample_fit_per_eligible_subgroup_reused_for_complete_and_common_support_H"
+        and "common_support_grids" not in config["evaluation"]
+        and config["bootstrap"].get("replicates") == 300
+        and config["bootstrap"].get("stage4_seed") == 20260609
+        and config["bootstrap"].get("stage6_seed") == 20260715
+    )
+    audit.check(
+        "analysis_configuration_contract",
+        bool(config_contract_ok),
+        "participant-grouped 5-fold OOF; n>=200; one equally-spaced 101-point common-support grid; locked seeds",
+    )
 
     mapping = {
         "cohort": (tables / "stage2_all7_cohort_check.csv", refs / "cohort.csv", None),
@@ -204,9 +227,9 @@ def main() -> int:
     audit.check("H_display_contract", manuscript_median(h)==.285 and round(float(h.min()),3)==.142 and round(float(h.max()),3)==.546, f"median/range={manuscript_median(h):.3f}/{h.min():.3f}-{h.max():.3f}")
 
     row_contracts = {
-        "common_support_detail": (tables / "stage6_common_support_subgroup_stability.csv", 378),
+        "common_support_detail": (tables / "stage6_common_support_subgroup_stability.csv", 252),
         "common_support_summary": (tables / "stage6_common_support_summary.csv", 42),
-        "continuous_bootstrap": (tables / "stage6_continuous_bootstrap.csv", 126),
+        "continuous_bootstrap": (tables / "stage6_continuous_bootstrap.csv", 84),
         "cross_cycle": (tables / "stage6_cross_cycle_transport_validation.csv", 84),
         "cross_cycle_ci": (tables / "stage6_cross_cycle_transport_ci.csv", 1176),
         "fixed_threshold": (tables / "stage6_fixed_threshold_oof_reclassification.csv", 252),
@@ -303,17 +326,46 @@ def main() -> int:
     audit.check("wear_cohort_contract", observed_wear == expected_wear, f"observed={observed_wear}")
 
     common = read(tables / "stage6_common_support_summary.csv")
+    common_detail = read(tables / "stage6_common_support_subgroup_stability.csv")
+    common_bootstrap = read(tables / "stage6_continuous_bootstrap.csv")
+    common_schema_ok = (
+        "common_support_empirical_H" not in common
+        and not any("empirical" in column.lower() for column in common.columns)
+        and len(set(common["source_algorithm"].astype(str) + "->" + common["target_algorithm"].astype(str))) == 42
+        and set(common_detail["grid_definition"].astype(str)) == {"original_grid_stage3", "common_support_linear"}
+        and common_detail.groupby("grid_definition").size().to_dict() == {"common_support_linear": 126, "original_grid_stage3": 126}
+        and common_bootstrap.groupby("support_definition").size().to_dict() == {"common_support_linear": 42, "original_grid_stage3": 42}
+        and common_detail["minimum_level_n"].astype(int).eq(200).all()
+        and common_detail.loc[common_detail["grid_definition"].eq("common_support_linear"), "grid_n"].astype(int).eq(101).all()
+        and np.allclose(
+            common_detail.loc[common_detail["grid_definition"].eq("common_support_linear"), "grid_min"].to_numpy(float),
+            common_detail.loc[common_detail["grid_definition"].eq("common_support_linear"), "common_support_low"].to_numpy(float),
+            rtol=0.0,
+            atol=1e-10,
+        )
+        and np.allclose(
+            common_detail.loc[common_detail["grid_definition"].eq("common_support_linear"), "grid_max"].to_numpy(float),
+            common_detail.loc[common_detail["grid_definition"].eq("common_support_linear"), "common_support_high"].to_numpy(float),
+            rtol=0.0,
+            atol=1e-10,
+        )
+    )
+    audit.check(
+        "single_grid_common_support_schema",
+        bool(common_schema_ok),
+        "summary=42; detail=126 original + 126 equally-spaced common-support; bootstrap=42 + 42",
+    )
     displayed = pair[["source_algorithm", "target_algorithm", "H"]].merge(
-        common[["source_algorithm", "target_algorithm", "common_support_empirical_H"]],
+        common[["source_algorithm", "target_algorithm", "common_support_linear_H"]],
         on=["source_algorithm", "target_algorithm"],
     )
-    exact_change = displayed["common_support_empirical_H"].to_numpy(float) - displayed["H"].to_numpy(float)
+    exact_change = displayed["common_support_linear_H"].to_numpy(float) - displayed["H"].to_numpy(float)
     quantum = Decimal("0.001")
     shown_change = [
         Decimal(str(float(common_value))).quantize(quantum, rounding=ROUND_HALF_UP)
         - Decimal(str(float(full_value))).quantize(quantum, rounding=ROUND_HALF_UP)
         for common_value, full_value in zip(
-            displayed["common_support_empirical_H"], displayed["H"]
+            displayed["common_support_linear_H"], displayed["H"]
         )
     ]
     ordered_change = sorted(shown_change)
@@ -323,10 +375,11 @@ def main() -> int:
     ).quantize(quantum, rounding=ROUND_HALF_UP)
     shown_lower = sum(value < 0 for value in shown_change)
     shown_unchanged = sum(value == 0 for value in shown_change)
+    shown_higher = sum(value > 0 for value in shown_change)
     audit.check(
         "figure4_common_support_display_contract",
-        int((exact_change < 0).sum()) == 42 and shown_lower == 41 and shown_unchanged == 1 and shown_median == Decimal("-0.047"),
-        f"exact_lower={(exact_change < 0).sum()}, displayed_lower={shown_lower}, displayed_unchanged={shown_unchanged}, displayed_median={shown_median}",
+        shown_lower == 32 and shown_unchanged == 6 and shown_higher == 4 and shown_median == Decimal("-0.024"),
+        f"raw_lower={(exact_change < 0).sum()}, displayed_lower={shown_lower}, displayed_unchanged={shown_unchanged}, displayed_higher={shown_higher}, displayed_median={shown_median}",
     )
 
     publication = generated / "publication_tables"
@@ -334,6 +387,41 @@ def main() -> int:
     audit.check("main_table_contract", main_counts == [22,7,9], f"rows={main_counts}")
     supplemental = list(publication.glob("TableS*.csv"))
     audit.check("supplemental_data_layer", len(supplemental) == 20, f"machine-readable files={len(supplemental)}")
+    publication_copies = {
+        publication / "TableS4_common_support_detail.csv": tables / "stage6_common_support_subgroup_stability.csv",
+        publication / "TableS4_common_support_summary.csv": tables / "stage6_common_support_summary.csv",
+        publication / "TableS7_continuous_support_bootstrap.csv": tables / "stage6_continuous_bootstrap.csv",
+        publication / "TableS8_wear_threshold_pair_metrics.csv": generated / "wear" / "wear_threshold_pair_metrics.csv",
+        publication / "TableS8_wear_threshold_comparison_vs_960.csv": generated / "wear" / "wear_threshold_comparison_vs_960.csv",
+    }
+    publication_copies_ok = all(
+        destination.is_file() and source.is_file() and destination.read_bytes() == source.read_bytes()
+        for destination, source in publication_copies.items()
+    )
+    audit.check(
+        "common_support_publication_copy_contract",
+        publication_copies_ok,
+        "Table S4/S7/S8 files are byte-identical copies of their generated aggregate sources",
+    )
+    table3 = read(publication / "main_table3.csv")
+    expected_table3_common = {
+        f"{ALGORITHM_LABELS[row.source_algorithm]} → {ALGORITHM_LABELS[row.target_algorithm]}": float(row.common_support_linear_H)
+        for row in common.itertuples()
+    }
+    table3_common_ok = (
+        len(table3) == 9
+        and "Common_support_max_spread_over_IQR" in table3
+        and all(
+            row.Source_to_target in expected_table3_common
+            and abs(float(row.Common_support_max_spread_over_IQR) - expected_table3_common[row.Source_to_target]) <= 1e-12
+            for row in table3.itertuples()
+        )
+    )
+    audit.check(
+        "main_table3_common_support_contract",
+        table3_common_ok,
+        "all nine Table 3 common-support values come from common_support_linear_H",
+    )
     figure_paths = [generated / "figures" / f"Figure{i}.png" for i in range(1,5)] + [generated / "figures" / f"FigureS{i}.png" for i in range(1,5)]
     valid_figures = []
     for path in figure_paths:
@@ -342,6 +430,11 @@ def main() -> int:
     audit.check("eight_figure_contract", len(figure_paths)==8 and all(valid_figures), f"valid={sum(valid_figures)}/8")
     figure_log = json.loads((generated / "logs" / "tables_figures_run.json").read_text())
     audit.check("figure4_three_panels", figure_log.get("figure4_panels") == ["A","B","C"], str(figure_log.get("figure4_panels")))
+    audit.check(
+        "figure4_single_grid_method_contract",
+        figure_log.get("figure4_common_support_definition") == "common_support_linear_H from the single equally spaced common-support grid",
+        str(figure_log.get("figure4_common_support_definition")),
+    )
     sample_flow = figure_log.get("sample_flow_audit", {})
     expected_sample_flow = {
         "positive_mec_weight_subjects": 19151,

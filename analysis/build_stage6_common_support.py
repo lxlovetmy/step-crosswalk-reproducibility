@@ -1,12 +1,11 @@
 #!/usr/bin/env python3
-"""Stage 6 common-support subgroup stability and tier uncertainty.
+"""Stage 6 continuous common-support subgroup stability.
 
-This post-freeze validation add-on implements SAP v1.5 without overwriting the
-locked Stage 3 point tier, featured-pair selection, or any earlier aggregate
-output. It rebuilds the D9-valid all-7 adult cohort in memory and writes only
-aggregate common-support, tier-sensitivity, tier-probability, summary, and run
-log files. No participant, person-day, OOF-prediction, or bootstrap-replicate
-table is written.
+This aggregate-only analysis rebuilds the D9-valid all-7 adult cohort in
+memory. It evaluates complete-sample H and common-support H with the same
+full-resample subgroup isotonic models, changing only the evaluation grid for
+the common-support estimate. No participant, person-day, OOF-prediction, or
+bootstrap-replicate table is written.
 """
 
 from __future__ import annotations
@@ -43,7 +42,9 @@ from build_stage4_crosswalk_uncertainty_ci import align_design, design_bootstrap
 
 DEFAULT_BOOTSTRAP_REPS = 300
 RANDOM_SEED_STAGE6 = 20260715
-MIN_COMMON_SUPPORT_LEVEL_N = 200
+# Common-support H uses the same eligible subgroups as the original-grid H.
+# Keep this name for compatibility with downstream modules.
+MIN_COMMON_SUPPORT_LEVEL_N = MIN_SUBGROUP_CURVE_N
 GRID_N = 101
 CI_LOW_Q = 2.5
 CI_HIGH_Q = 97.5
@@ -53,11 +54,9 @@ TIER2_MAE_MAX = 0.27
 TIER2_SPREAD_MAX = 0.35
 
 ORIGINAL_DEFINITION = "original_grid_stage3"
-COMMON_EMPIRICAL_DEFINITION = "common_support_pooled_empirical_quantile"
 COMMON_LINEAR_DEFINITION = "common_support_linear"
 DEFINITIONS = [
     ORIGINAL_DEFINITION,
-    COMMON_EMPIRICAL_DEFINITION,
     COMMON_LINEAR_DEFINITION,
 ]
 
@@ -94,7 +93,7 @@ class PairComputation:
 
 
 def log(message: str) -> None:
-    print(f"[stage6-support-tier {datetime.now().strftime('%H:%M:%S')}] {message}", flush=True)
+    print(f"[stage6-common-support {datetime.now().strftime('%H:%M:%S')}] {message}", flush=True)
 
 
 def parse_args() -> argparse.Namespace:
@@ -156,7 +155,7 @@ def load_stage3_points(out_dir: Path) -> dict[PairKey, Stage3Point]:
     path = out_dir / "tables" / "stage3_translatability_map.csv"
     if not path.exists():
         raise FileNotFoundError(
-            f"Required locked Stage 3 map not found: {path}. "
+            f"Required locked Stage 3 point map not found: {path}. "
             "Pass the project outputs root as --out-dir."
         )
     points: dict[PairKey, Stage3Point] = {}
@@ -256,25 +255,6 @@ def grouped_oof_mae_per_iqr(
     return safe_divide(mae, target_iqr)
 
 
-def crossfit_ensemble_predictions(
-    x: np.ndarray,
-    y: np.ndarray,
-    subject_ids: np.ndarray,
-    evaluation_grid: np.ndarray,
-    seed: int,
-) -> np.ndarray:
-    """Average five leave-fold-out isotonic curves on a common grid."""
-
-    folds = grouped_folds(subject_ids, seed)
-    if not folds:
-        return np.full(len(evaluation_grid), np.nan, dtype=float)
-    fold_predictions: list[np.ndarray] = []
-    for train_mask, _test_mask in folds:
-        fitted = fit_crosswalk(HEADLINE_METHOD, x[train_mask], y[train_mask])
-        fold_predictions.append(fitted.predict(evaluation_grid))
-    return np.mean(np.vstack(fold_predictions), axis=0)
-
-
 def eligible_levels(
     values: np.ndarray,
     group_type: str,
@@ -322,14 +302,11 @@ def detail_row(
     max_spread: float,
 ) -> dict[str, object]:
     if definition == ORIGINAL_DEFINITION:
-        grid_role = "v1.4_original_grid_reference"
+        grid_role = "complete_sample_reference"
         support_rule = "pooled source P05-P95; may extend beyond a subgroup's own support"
-    elif definition == COMMON_EMPIRICAL_DEFINITION:
-        grid_role = "v1.5_common_support_headline"
-        support_rule = "intersection of eligible subgroup source P05-P95; pooled empirical-quantile grid"
     else:
-        grid_role = "v1.5_common_support_robustness"
-        support_rule = "intersection of eligible subgroup source P05-P95; equally spaced linear grid"
+        grid_role = "common_support_linear"
+        support_rule = "intersection of eligible subgroup source P05-P95; 101-point equally spaced grid"
     return {
         "exposure": "daily_steps",
         "source_algorithm": source,
@@ -339,7 +316,7 @@ def detail_row(
         "grid_definition": definition,
         "grid_role": grid_role,
         "curve_estimator": estimator,
-        "minimum_level_n": MIN_SUBGROUP_CURVE_N if definition == ORIGINAL_DEFINITION else MIN_COMMON_SUPPORT_LEVEL_N,
+        "minimum_level_n": MIN_SUBGROUP_CURVE_N,
         "n_groups_compared": len(levels),
         "group_levels": "|".join(levels),
         "group_ns": "|".join(str(n) for n in ns),
@@ -396,84 +373,61 @@ def compute_pair(
     spread_candidates: dict[str, list[tuple[str, float, float]]] = defaultdict(list)
 
     for group_type, group_values in groups.items():
-        original_levels = eligible_levels(
+        eligible_group_levels = eligible_levels(
             group_values,
             group_type,
             MIN_SUBGROUP_CURVE_N,
         )
         original_predictions: list[np.ndarray] = []
-        for _level, level_mask, _n in original_levels:
+        fitted_subgroup_models = []
+        for _level, level_mask, _n in eligible_group_levels:
             fitted = fit_crosswalk(HEADLINE_METHOD, x[level_mask], y[level_mask])
+            fitted_subgroup_models.append(fitted)
             original_predictions.append(fitted.predict(original_grid))
         original_p95, original_max = spread_stats(original_predictions)
 
-        common_levels = eligible_levels(
-            group_values,
-            group_type,
-            MIN_COMMON_SUPPORT_LEVEL_N,
-        )
-        levels = [level for level, _mask, _n in common_levels]
-        ns = [n for _level, _mask, n in common_levels]
-        level_p05 = [quantile(x[mask], 0.05) for _level, mask, _n in common_levels]
-        level_p95 = [quantile(x[mask], 0.95) for _level, mask, _n in common_levels]
+        levels = [level for level, _mask, _n in eligible_group_levels]
+        ns = [n for _level, _mask, n in eligible_group_levels]
+        level_p05 = [quantile(x[mask], 0.05) for _level, mask, _n in eligible_group_levels]
+        level_p95 = [quantile(x[mask], 0.95) for _level, mask, _n in eligible_group_levels]
         common_low = max(level_p05) if level_p05 else math.nan
         common_high = min(level_p95) if level_p95 else math.nan
         common_valid = (
-            len(common_levels) >= 2
+            len(eligible_group_levels) >= 2
             and finite(common_low)
             and finite(common_high)
             and common_low < common_high
         )
 
-        empirical_p95 = math.nan
-        empirical_max = math.nan
         linear_p95 = math.nan
         linear_max = math.nan
-        empirical_grid_low = math.nan
-        empirical_grid_high = math.nan
         linear_grid_low = math.nan
         linear_grid_high = math.nan
         pooled_common_n = 0
         if common_valid:
             eligible_mask = np.zeros(len(x), dtype=bool)
-            for _level, level_mask, _n in common_levels:
+            for _level, level_mask, _n in eligible_group_levels:
                 eligible_mask |= level_mask
             pooled_common_mask = eligible_mask & (x >= common_low) & (x <= common_high)
             pooled_common_x = x[pooled_common_mask]
             pooled_common_n = int(len(pooled_common_x))
-            if pooled_common_n >= GRID_N:
-                empirical_grid = np.quantile(
-                    pooled_common_x,
-                    np.linspace(0.0, 1.0, GRID_N),
-                )
-                linear_grid = np.linspace(common_low, common_high, GRID_N)
-                empirical_grid_low = float(np.min(empirical_grid))
-                empirical_grid_high = float(np.max(empirical_grid))
-                linear_grid_low = float(np.min(linear_grid))
-                linear_grid_high = float(np.max(linear_grid))
-                combined_grid = np.concatenate([empirical_grid, linear_grid])
-                common_predictions_empirical: list[np.ndarray] = []
-                common_predictions_linear: list[np.ndarray] = []
-                for level_number, (_level, level_mask, _n) in enumerate(common_levels):
-                    prediction = crossfit_ensemble_predictions(
-                        x[level_mask],
-                        y[level_mask],
-                        subject_ids[level_mask],
-                        combined_grid,
-                        seed + 1009 * (level_number + 1),
-                    )
-                    common_predictions_empirical.append(prediction[:GRID_N])
-                    common_predictions_linear.append(prediction[GRID_N:])
-                empirical_p95, empirical_max = spread_stats(common_predictions_empirical)
-                linear_p95, linear_max = spread_stats(common_predictions_linear)
+            linear_grid = np.linspace(common_low, common_high, GRID_N)
+            linear_grid_low = float(np.min(linear_grid))
+            linear_grid_high = float(np.max(linear_grid))
+            common_predictions_linear: list[np.ndarray] = []
+            # The subgroup models above are fitted once on the full resample
+            # and reused here; observed density inside a valid intersection
+            # does not determine the 101 evaluation coordinates.
+            for fitted in fitted_subgroup_models:
+                common_predictions_linear.append(fitted.predict(linear_grid))
+            linear_p95, linear_max = spread_stats(common_predictions_linear)
 
-        original_level_names = [level for level, _mask, _n in original_levels]
-        original_ns = [n for _level, _mask, n in original_levels]
-        original_level_p05 = [quantile(x[mask], 0.05) for _level, mask, _n in original_levels]
-        original_level_p95 = [quantile(x[mask], 0.95) for _level, mask, _n in original_levels]
+        original_level_names = [level for level, _mask, _n in eligible_group_levels]
+        original_ns = [n for _level, _mask, n in eligible_group_levels]
+        original_level_p05 = [quantile(x[mask], 0.05) for _level, mask, _n in eligible_group_levels]
+        original_level_p95 = [quantile(x[mask], 0.95) for _level, mask, _n in eligible_group_levels]
 
         spread_candidates[ORIGINAL_DEFINITION].append((group_type, original_p95, original_max))
-        spread_candidates[COMMON_EMPIRICAL_DEFINITION].append((group_type, empirical_p95, empirical_max))
         spread_candidates[COMMON_LINEAR_DEFINITION].append((group_type, linear_p95, linear_max))
 
         if keep_detail:
@@ -483,7 +437,7 @@ def compute_pair(
                     target=target,
                     group_type=group_type,
                     definition=ORIGINAL_DEFINITION,
-                    estimator="full-resample subgroup isotonic; v1.4-compatible reference",
+                    estimator="full-resample subgroup isotonic; complete-sample reference",
                     levels=original_level_names,
                     ns=original_ns,
                     level_p05=original_level_p05,
@@ -500,45 +454,29 @@ def compute_pair(
                     max_spread=original_max,
                 )
             )
-            for definition, p95_value, max_value, grid_low, grid_high in (
-                (
-                    COMMON_EMPIRICAL_DEFINITION,
-                    empirical_p95,
-                    empirical_max,
-                    empirical_grid_low,
-                    empirical_grid_high,
-                ),
-                (
-                    COMMON_LINEAR_DEFINITION,
-                    linear_p95,
-                    linear_max,
-                    linear_grid_low,
-                    linear_grid_high,
-                ),
-            ):
-                metric_rows.append(
-                    detail_row(
-                        source=source,
-                        target=target,
-                        group_type=group_type,
-                        definition=definition,
-                        estimator=f"{FOLDS}-fold subject-grouped cross-fitted isotonic ensemble",
-                        levels=levels,
-                        ns=ns,
-                        level_p05=level_p05,
-                        level_p95=level_p95,
-                        original_low=original_low,
-                        original_high=original_high,
-                        common_low=common_low,
-                        common_high=common_high,
-                        grid_low=grid_low,
-                        grid_high=grid_high,
-                        pooled_common_n=pooled_common_n,
-                        target_iqr=target_iqr,
-                        p95_spread=p95_value,
-                        max_spread=max_value,
-                    )
+            metric_rows.append(
+                detail_row(
+                    source=source,
+                    target=target,
+                    group_type=group_type,
+                    definition=COMMON_LINEAR_DEFINITION,
+                    estimator="full-resample subgroup isotonic; same fitted subgroup curve as original-grid H",
+                    levels=levels,
+                    ns=ns,
+                    level_p05=level_p05,
+                    level_p95=level_p95,
+                    original_low=original_low,
+                    original_high=original_high,
+                    common_low=common_low,
+                    common_high=common_high,
+                    grid_low=linear_grid_low,
+                    grid_high=linear_grid_high,
+                    pooled_common_n=pooled_common_n,
+                    target_iqr=target_iqr,
+                    p95_spread=linear_p95,
+                    max_spread=linear_max,
                 )
+            )
 
     spread_by_definition: dict[str, float] = {}
     spread_raw_by_definition: dict[str, float] = {}
@@ -577,13 +515,11 @@ def build_tier_sensitivity_row(
     stage3: Stage3Point,
 ) -> dict[str, object]:
     original_recomputed_spread = computation.spread_by_definition[ORIGINAL_DEFINITION]
-    empirical_spread = computation.spread_by_definition[COMMON_EMPIRICAL_DEFINITION]
     linear_spread = computation.spread_by_definition[COMMON_LINEAR_DEFINITION]
     original_recomputed_tier = tier_from_metrics(
         stage3.mae_per_target_iqr,
         original_recomputed_spread,
     )
-    empirical_tier = tier_from_metrics(stage3.mae_per_target_iqr, empirical_spread)
     linear_tier = tier_from_metrics(stage3.mae_per_target_iqr, linear_spread)
     return {
         "exposure": "daily_steps",
@@ -606,15 +542,10 @@ def build_tier_sensitivity_row(
             original_recomputed_spread - stage3.max_spread_per_target_iqr
         ),
         "stage6_original_grid_tier_recomputed": original_recomputed_tier,
-        "common_support_empirical_max_spread_per_target_iqr": empirical_spread,
-        "common_support_empirical_driver": computation.driver_by_definition[COMMON_EMPIRICAL_DEFINITION],
-        "common_support_empirical_tier": empirical_tier,
-        "common_support_empirical_changed_vs_stage3": empirical_tier != stage3.tier_final,
         "common_support_linear_max_spread_per_target_iqr": linear_spread,
         "common_support_linear_driver": computation.driver_by_definition[COMMON_LINEAR_DEFINITION],
         "common_support_linear_tier": linear_tier,
         "common_support_linear_changed_vs_stage3": linear_tier != stage3.tier_final,
-        "common_support_grid_tiers_agree": empirical_tier == linear_tier,
         "featured_main_flag_preserved": stage3.featured_main_flag,
         "featured_main_reason_preserved": stage3.featured_main_reason,
         "tier_rule_fixed": (
@@ -622,8 +553,8 @@ def build_tier_sensitivity_row(
             "tier_2 if MAE/IQR<=0.27 and spread/IQR<=0.35; else tier_3"
         ),
         "interpretation": (
-            "Stage 3 tier is preserved. Common-support tiers are v1.5 sensitivity estimates "
-            "using the loaded Stage 3 MAE/IQR and new support-restricted spread."
+            "Stage 3 tier is preserved. The common-support tier uses the loaded "
+            "Stage 3 MAE/IQR and the support-restricted linear-grid spread."
         ),
     }
 
@@ -752,15 +683,10 @@ def build_summary(
         return Counter(str(row[column]) for row in tier_rows)
 
     stage3_counts = tier_counts("stage3_tier_final_preserved")
-    empirical_counts = tier_counts("common_support_empirical_tier")
     linear_counts = tier_counts("common_support_linear_tier")
-    changed_empirical = [
+    changed_linear = [
         row for row in tier_rows
-        if bool(row["common_support_empirical_changed_vs_stage3"])
-    ]
-    grid_disagreements = [
-        row for row in tier_rows
-        if not bool(row["common_support_grid_tiers_agree"])
+        if bool(row["common_support_linear_changed_vs_stage3"])
     ]
     bootstrap_by_definition = {
         definition: [
@@ -774,12 +700,12 @@ def build_summary(
         "# Stage 6 Common-Support and Tier-Uncertainty Summary",
         "",
         f"- Generated: {datetime.now(timezone.utc).isoformat()}",
-        "- Status: post-freeze SAP v1.5 validation/sensitivity add-on; no Stage 3 point tier or featured pair was overwritten.",
+        "- Status: continuous support validation/sensitivity add-on; no Stage 3 point tier or featured pair was overwritten.",
         f"- Cohort: {cohort.subjects_n} adults / {cohort.valid_days_n} valid person-days; 42 directed pairs.",
-        f"- Bootstrap completed: {bootstrap_reps}/{DEFAULT_BOOTSTRAP_REPS} requested by the final SAP specification.",
-        "- Common support: intersection of every eligible nonmissing subgroup's source P05-P95; eligibility n>=200.",
-        f"- Common-support curves: {FOLDS}-fold subject-grouped cross-fitted isotonic ensemble; 101 pooled empirical-quantile points (headline) plus 101 linear points (robustness).",
-        "- Original-grid tier bootstrap preserves the v1.4 curve estimator: full-resample subgroup isotonic curves on the pooled source P05-P95 linear grid.",
+        f"- Bootstrap completed: {bootstrap_reps}/{DEFAULT_BOOTSTRAP_REPS} requested by the final analysis specification.",
+        f"- Common support: intersection of every eligible nonmissing subgroup's source P05-P95; the eligible subgroups are the same as for original-grid H (n>={MIN_SUBGROUP_CURVE_N}).",
+        "- Common-support curves: full-resample subgroup isotonic; the same fitted subgroup curve is used for original-grid H and common-support H, with a 101-point equally spaced grid inside the common-support interval.",
+        "- Original-grid tier bootstrap uses full-resample subgroup isotonic curves on the pooled source P05-P95 grid.",
         "- Bootstrap: PSU sampled with replacement within SDMVSTRA; grouped OOF MAE/IQR and curve spread were recomputed; 0.20/0.27 and 0.20/0.35 cutpoints stayed fixed.",
         "- Guardrails: aggregate outputs only; no SEQN, person-day, minute, participant OOF prediction, or bootstrap-replicate table was written.",
         "",
@@ -794,22 +720,19 @@ def build_summary(
         "| definition | tier 1 | tier 2 | tier 3 |",
         "|---|---:|---:|---:|",
         f"| Stage 3 original (preserved) | {stage3_counts['tier_1']} | {stage3_counts['tier_2']} | {stage3_counts['tier_3']} |",
-        f"| common support, empirical-quantile headline | {empirical_counts['tier_1']} | {empirical_counts['tier_2']} | {empirical_counts['tier_3']} |",
-        f"| common support, linear robustness | {linear_counts['tier_1']} | {linear_counts['tier_2']} | {linear_counts['tier_3']} |",
+        f"| common support, linear headline | {linear_counts['tier_1']} | {linear_counts['tier_2']} | {linear_counts['tier_3']} |",
         "",
-        f"- Pairs changing tier under common-support empirical headline: {len(changed_empirical)}/42.",
-        f"- Pairs whose empirical and linear common-support tiers disagree: {len(grid_disagreements)}/42.",
+        f"- Pairs changing tier under the common-support linear grid: {len(changed_linear)}/42.",
         "",
-        "| source -> target | Stage 3 | common empirical | common linear | empirical max spread/IQR | driver |",
+        "| source -> target | Stage 3 | common linear | common linear max spread/IQR | driver |",
         "|---|---|---|---|---:|---|",
     ]
-    for row in changed_empirical:
+    for row in changed_linear:
         lines.append(
             f"| {row['source_algorithm']}->{row['target_algorithm']} | "
-            f"{row['stage3_tier_final_preserved']} | {row['common_support_empirical_tier']} | "
-            f"{row['common_support_linear_tier']} | "
-            f"{format_number(float(row['common_support_empirical_max_spread_per_target_iqr']))} | "
-            f"{row['common_support_empirical_driver']} |"
+            f"{row['stage3_tier_final_preserved']} | {row['common_support_linear_tier']} | "
+            f"{format_number(float(row['common_support_linear_max_spread_per_target_iqr']))} | "
+            f"{row['common_support_linear_driver']} |"
         )
 
     lines.extend(
@@ -1032,7 +955,6 @@ def main() -> None:
         "script": "scripts/python/build_stage6_common_support_tier.py",
         "started_utc": started.isoformat(),
         "finished_utc": finished.isoformat(),
-        "sap_version": "v1.5",
         "analysis_role": "post-freeze validation/sensitivity; does not overwrite Stage 3",
         "algorithms": ALGORITHMS,
         "directed_pairs": len(pairs),
@@ -1046,13 +968,14 @@ def main() -> None:
         "progress_every": args.progress_every,
         "folds": FOLDS,
         "stage2_point_seed": STAGE2_RANDOM_SEED,
+        "minimum_subgroup_curve_n": MIN_SUBGROUP_CURVE_N,
         "minimum_common_support_level_n": MIN_COMMON_SUPPORT_LEVEL_N,
         "common_support_rule": "intersection of nonmissing eligible subgroup source P05-P95",
         "grid_n": GRID_N,
-        "common_support_headline_grid": COMMON_EMPIRICAL_DEFINITION,
-        "common_support_robustness_grid": COMMON_LINEAR_DEFINITION,
-        "common_support_curve_estimator": "fivefold subject-grouped cross-fitted isotonic ensemble",
-        "original_grid_curve_estimator": "full-resample subgroup isotonic; v1.4-compatible reference",
+        "common_support_headline_grid": COMMON_LINEAR_DEFINITION,
+        "common_support_curve_estimator": "full-resample subgroup isotonic; same fitted subgroup curve as original-grid H",
+        "common_support_grid": "101-point equally spaced grid within the common-support interval",
+        "original_grid_curve_estimator": "full-resample subgroup isotonic; complete-sample reference",
         "tier_cutpoints": {
             "tier_1": {"mae_per_target_iqr_max": 0.20, "spread_per_target_iqr_max": 0.20},
             "tier_2": {"mae_per_target_iqr_max": 0.27, "spread_per_target_iqr_max": 0.35},
@@ -1076,13 +999,13 @@ def main() -> None:
         ],
         "guardrails": [
             "Stage 3 tier_final and featured_main are loaded and preserved",
-            "fixed v1.4 tier cutpoints; 0.27 is never reselected within bootstrap",
+            "fixed tier cutpoints; 0.27 is never reselected within bootstrap",
             "public raw data read in memory only",
             "aggregate outputs only",
             "no SEQN/person-day/minute-level output",
             "no individual OOF prediction output",
             "no bootstrap replicate-level output",
-            "no SAP/log/manuscript edits by this script",
+            "no log/manuscript edits by this script",
         ],
     }
     with (out_logs / "stage6_common_support_tier_run.json").open(
@@ -1148,8 +1071,6 @@ def main_release() -> None:
             "full_range_H_driver": loaded["H_driver"],
             "full_range_H_recomputed": result.spread_by_definition[ORIGINAL_DEFINITION],
             "full_range_H_absolute_reproduction_difference": abs(result.spread_by_definition[ORIGINAL_DEFINITION] - float(loaded["H"])),
-            "common_support_empirical_H": result.spread_by_definition[COMMON_EMPIRICAL_DEFINITION],
-            "common_support_empirical_driver": result.driver_by_definition[COMMON_EMPIRICAL_DEFINITION],
             "common_support_linear_H": result.spread_by_definition[COMMON_LINEAR_DEFINITION],
             "common_support_linear_driver": result.driver_by_definition[COMMON_LINEAR_DEFINITION],
             "interpretation": "continuous_support_sensitivity_without_acceptability_grade",
@@ -1217,6 +1138,14 @@ def main_release() -> None:
         "bootstrap_full_spec_complete": args.bootstrap_reps == DEFAULT_BOOTSTRAP_REPS,
         "design_strata": len(np.unique(strata)),
         "design_stratum_psu_cells": design_overall["n_psu"],
+        "minimum_subgroup_curve_n": MIN_SUBGROUP_CURVE_N,
+        "minimum_common_support_level_n": MIN_COMMON_SUPPORT_LEVEL_N,
+        "common_support_rule": "intersection of nonmissing eligible subgroup source P05-P95 using the same eligible subgroups as original-grid H",
+        "grid_n": GRID_N,
+        "common_support_headline_grid": COMMON_LINEAR_DEFINITION,
+        "common_support_curve_estimator": "full-resample subgroup isotonic; same fitted subgroup curve as original-grid H",
+        "common_support_grid": "101-point equally spaced grid within the common-support interval",
+        "original_grid_curve_estimator": "full-resample subgroup isotonic; complete-sample reference",
         "point_reproduction": {"max_abs_E_difference": max_e_diff, "max_abs_H_difference": max_h_diff},
         "output_row_counts": {"detail": len(detail_rows), "summary": len(summary_rows), "continuous_bootstrap": len(continuous_rows)},
         "acceptability_grades_generated": False,

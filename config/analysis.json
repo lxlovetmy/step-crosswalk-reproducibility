@@ -1,5 +1,5 @@
 {
-  "schema_version": 3,
+  "schema_version": 4,
   "project": {
     "slug": "nhanes_wrist_step_crosswalk",
     "release_scope": "current_crosswalk_only_manuscript",
@@ -95,9 +95,10 @@
     ],
     "minimum_subgroup_n": 200,
     "common_support_definition": "intersection_of_eligible_subgroup_source_p05_p95",
-    "common_support_grids": {
-      "pooled_empirical_nodes": 101,
-      "equally_spaced_nodes": 101
+    "common_support_curve_fitting": "one_full_resample_fit_per_eligible_subgroup_reused_for_complete_and_common_support_H",
+    "common_support_grid": {
+      "type": "equally_spaced",
+      "nodes": 101
     },
     "fixed_target_threshold_steps": [
       7000,
