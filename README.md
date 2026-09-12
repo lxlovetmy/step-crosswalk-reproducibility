@@ -1,6 +1,6 @@
 # Step-algorithm crosswalk reproducibility package
 
-Version 1.1.1 reproducibility release for the crosswalk-only manuscript. The package rebuilds all reported aggregate analyses, three main-table data layers, S1–S9 machine-readable resources, and Figures 1–4/S1–S4 from the twelve frozen public-use inputs. It also exports the exact fitted isotonic thresholds, direction metadata, and a strict converter. It does not rebuild Word files.
+Version 1.1.2 metadata release for the crosswalk-only manuscript. It preserves the validated v1.1.1 scientific code and reference results while adding complete creator metadata and the archival Zenodo DOI `10.5281/zenodo.22723129`. The package rebuilds all reported aggregate analyses, three main-table data layers, S1–S9 machine-readable resources, and Figures 1–4/S1–S4 from the twelve frozen public-use inputs. It also exports the exact fitted isotonic thresholds, direction metadata, and a strict converter. It does not rebuild Word files.
 
 ## Scope and interpretation
 
@@ -61,6 +61,6 @@ For strict conversion from the bundled references, use `analysis/crosswalk_conve
 
 No raw data, participant identifiers, person-day/minute tables, fold assignments, participant-level OOF predictions, or bootstrap-replicate rows are redistributed or written. Figures S1/S2 use participant-level arrays only in memory.
 
-## Human completion items
+## Citation and preservation
 
-The software is released under the MIT License. Author names and identifiers in `CITATION.cff`, together with the final Zenodo DOI, remain to be completed before manuscript submission and DOI publication.
+The software is released under the MIT License. Complete creator metadata are recorded in `CITATION.cff`. Cite the version-specific Zenodo record using DOI `10.5281/zenodo.22723129` and use the immutable GitHub `v1.1.2` release for the matching versioned source archive.

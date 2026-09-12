@@ -1,11 +1,11 @@
 # Common-support H release integration plan
 
-**Status:** SCIENTIFIC WORK COMPLETE; RELEASE METADATA FOLLOW-UP
-**Version:** 2026-09-11.7
+**Status:** SCIENTIFIC WORK COMPLETE; V1.1.2 RELEASE FINALIZATION
+**Version:** 2026-09-12.1
 **Owner:** Codex with user review
 **Approver:** user
 **Approval timestamp:** 2026-09-11T15:59:29Z
-**Current phase:** Step 4 — release metadata and manuscript-link alignment; author metadata intentionally deferred
+**Current phase:** Step 4 — creator-complete v1.1.2 GitHub and Zenodo release finalization
 **Baseline:** `main` at `4e07d0f`; dirty working tree recorded in `findings.md` (F-001–F-004).
 
 ## Purpose
@@ -129,8 +129,9 @@ The user explicitly authorized the complete second step on 2026-09-11. For this 
 - 2026-09-11: User explicitly authorized the complete local Step 2 and requested uninterrupted execution. Internal Phases 2–4 are therefore one bounded execution phase; GitHub and manuscript/publication metadata remain out of scope.
 - 2026-09-11: Step 2 completed. Fresh smoke and retained full candidate passed; the five validated method-affected CSV references and Figure 4 were promoted; terminal validation and an independent 300-replicate clean-room run passed 96/96. The task stops for user review before any Step 3 Git operation.
 - 2026-09-11: The user authorized Step 3. The validated changes were organized into three commits, pushed to `main`, tagged `v1.1.1`, and published as a GitHub Release with a versioned ZIP and matching SHA-256 asset.
-- 2026-09-11: The user authorized Step 4 except author metadata. MIT was selected for the software; a Zenodo version DOI was selected for long-term citation, but publication remains dependent on the creator list that Zenodo requires.
+- 2026-09-11: The user authorized Step 4 except author metadata. MIT was selected for the software and a version-specific Zenodo DOI was selected for long-term citation.
+- 2026-09-12: The user supplied and approved the four-author order, affiliations, and ORCIDs, then authorized completion of the remaining submission and release work. Zenodo version DOI `10.5281/zenodo.22723129` was reserved in a creator-complete Software draft. A metadata-only v1.1.2 follow-up will preserve the validated v1.1.1 scientific resources.
 
 ## Outcomes and retrospective
 
-Step 1 passed at the candidate-code level. Step 2 passed local scientific reproduction and clean-room acceptance. Step 3 created the versioned GitHub release. Step 4 is complete for all non-author metadata that can be finalized before Zenodo receives its required creator list.
+Step 1 passed at the candidate-code level. Step 2 passed local scientific reproduction and clean-room acceptance. Step 3 created the versioned GitHub v1.1.1 release. Step 4 now has complete creator metadata and a reserved Zenodo version DOI; the final v1.1.2 archive, GitHub release, Zenodo file upload/publication, and DOI resolution check remain.

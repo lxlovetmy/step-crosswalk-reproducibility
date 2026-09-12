@@ -78,3 +78,12 @@ Next action after final local gates: stop and obtain explicit user confirmation 
 - Rendered and inspected all 35 English pages and all 22 Chinese pages. The changed English text spans pages 20–21; the changed Chinese text is on page 13. No clipping, overlap, missing glyphs, or broken pagination was found.
 - Hardened the release-archive helper against including `.git`/cache paths or writing a self-containing ZIP inside the package. The previously published Git-tag archive was separately confirmed not to contain `.git`.
 - Audited the complete Git history and current package for raw/Word/archive paths, personal absolute paths, credential signatures, and large blobs; no publish-blocking item was found. Only `lxlovetmy/step-crosswalk-reproducibility` was selected for public visibility; other account repositories are unaffected.
+
+## 2026-09-12 — creator metadata and DOI reservation
+
+- Recorded the approved creator order and ORCIDs for Xiang Luo, Qinlong Li, Qiang Dong, and Yue Zhou in `CITATION.cff` and the Zenodo deposit ledger.
+- Reserved Zenodo version DOI `10.5281/zenodo.22723129` in an open-access Software draft and synchronized it to the v1.1.2 Code Availability and citation metadata.
+- Kept the release metadata-only: validated v1.1.1 scientific resources, reference values, and 300-replicate evidence remain unchanged.
+- Re-ran all 28 unit tests and the 96-check terminal validator before release finalization; both passed.
+
+Next: regenerate the internal manifest, create and verify the v1.1.2 archive, publish the matching GitHub release, upload the archive assets to the Zenodo draft, and complete the final DOI/link cross-check.

@@ -2,14 +2,29 @@ cff-version: 1.2.0
 message: "Please cite the associated manuscript and this software release."
 title: "Direction-specific wrist-step algorithm crosswalk reproducibility package"
 type: software
-version: 1.1.1
-date-released: 2026-09-11
+version: 1.1.2
+date-released: 2026-09-12
 authors:
-  - family-names: "AUTHOR TO COMPLETE"
-    given-names: "AUTHOR TO COMPLETE"
+  - family-names: "Luo"
+    given-names: "Xiang"
+    orcid: "https://orcid.org/0009-0006-2113-2397"
+    affiliation: "School of Sport Science, Beijing Sport University"
+  - family-names: "Li"
+    given-names: "Qinlong"
+    orcid: "https://orcid.org/0000-0001-5989-8968"
+    affiliation: "China Institute of Sport Science"
+  - family-names: "Dong"
+    given-names: "Qiang"
+    orcid: "https://orcid.org/0009-0003-9462-3304"
+    affiliation: "School of Sport Science, Beijing Sport University"
+  - family-names: "Zhou"
+    given-names: "Yue"
+    orcid: "https://orcid.org/0000-0003-2603-7234"
+    affiliation: "School of Sport Science, Beijing Sport University"
 abstract: "Code, exact direction-specific isotonic resources, and aggregate reference results for the NHANES wrist-step crosswalk study."
 repository-code: "https://github.com/lxlovetmy/step-crosswalk-reproducibility"
-repository-artifact: "https://github.com/lxlovetmy/step-crosswalk-reproducibility/releases/tag/v1.1.1"
+repository-artifact: "https://github.com/lxlovetmy/step-crosswalk-reproducibility/releases/tag/v1.1.2"
+doi: "10.5281/zenodo.22723129"
 license: MIT
 keywords:
   - accelerometry

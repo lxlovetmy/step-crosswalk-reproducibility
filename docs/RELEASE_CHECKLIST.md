@@ -14,5 +14,6 @@
 - [x] MIT License selected and inserted for the software release.
 - [x] Make only `lxlovetmy/step-crosswalk-reproducibility` public after the final history/privacy audit.
 - [x] Fix the non-author Zenodo deposit metadata in `docs/ZENODO_DEPOSIT.md`.
-- [ ] **AUTHOR TO COMPLETE:** replace citation author/repository placeholders.
-- [ ] Add the final author metadata, publish the Zenodo software record, and insert its DOI before manuscript submission.
+- [x] Replace citation author/repository placeholders with the checked four-author metadata.
+- [x] Reserve Zenodo DOI `10.5281/zenodo.22723129` and insert it into the package and manuscript candidate.
+- [ ] Publish the creator-complete Zenodo software record and verify the DOI after the matching GitHub v1.1.2 release is public.

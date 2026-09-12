@@ -93,3 +93,7 @@ The published Step 3 ZIP was produced from the Git tag and contains no `.git` pa
 ## F-023 — public-release boundary audit (confirmed)
 
 The complete Git history contains no raw-data/Word/spreadsheet/archive path, personal absolute path, credential signature, or blob larger than 50 MB. The two `/private/tmp` occurrences are intentional generic runtime references in the clean-room tool and report, not user-specific paths. The public visibility decision applies only to `lxlovetmy/step-crosswalk-reproducibility`; all other repositories in the account remain unchanged.
+
+## F-024 — creator metadata and Zenodo DOI reserved (confirmed)
+
+The approved creator sequence is Xiang Luo, Qinlong Li, Qiang Dong, and Yue Zhou. All four ORCIDs and affiliations were entered into `CITATION.cff` and the creator-complete Zenodo Software draft. Zenodo reserved version DOI `10.5281/zenodo.22723129` on 2026-09-12. The v1.1.2 follow-up is metadata-only: no scientific source, aggregate reference result, or 300-replicate validation evidence was changed. Before release finalization, all 28 package tests and all 96 terminal validation checks passed.

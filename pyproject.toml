@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "step-crosswalk-reproducibility"
-version = "1.1.1"
+version = "1.1.2"
 description = "Reproducibility code for direction-specific wrist-step crosswalks"
 license = "MIT"
 requires-python = ">=3.11,<3.14"
