@@ -77,3 +77,19 @@ Before promotion, 8 of 96 checks failed and every failure was confined to the fi
 ## F-019 — clean-room acceptance (confirmed)
 
 The final clean-room command ran the complete 300-replicate pipeline in a new temporary output directory, finished in 3,568.166 seconds, returned code 0, and passed the terminal validator at 96/96 with zero failures. The temporary output was removed after the report was written. Repeated controlled Figure 4 rendering reproduced SHA-256 `2ac669ebf2c26412630f9e8984d7550fc40cb37f6231712f82cf2b3eb6ffca6c`, identical to the promoted visual reference.
+
+## F-020 — GitHub release completed (confirmed)
+
+Step 3 produced three scoped commits ending at `a1ae3b7`, pushed `main`, created annotated tag `v1.1.1`, and published the GitHub Release at `https://github.com/lxlovetmy/step-crosswalk-reproducibility/releases/tag/v1.1.1`. The uploaded versioned ZIP was 5,498,887 bytes and its local, checksum-file, and GitHub asset SHA-256 values all matched `6dbc107e0e25e70ab29cca1a30c0e5f366e62fdf22be8785118aeaa6e2902bec`. No participant data or Word manuscript was included.
+
+## F-021 — Step 4 non-author decisions (confirmed)
+
+The user delegated all Step 4 decisions except author identity. MIT was selected as the software license because the release is intended for broad reuse with attribution and warranty limitation. A version-specific Zenodo DOI was selected for preservation and citation. Zenodo publication cannot be completed before at least one creator is supplied, so the non-author deposit metadata is frozen in `docs/ZENODO_DEPOSIT.md` and DOI insertion remains intentionally pending. English and Chinese manuscript copies were created without overwriting their source documents; their updated Code Availability statements point to the exact GitHub `v1.1.1` release, identify the MIT License and checksum asset, and preserve the participant-data and Word-file exclusions.
+
+## F-022 — release-archive helper hardened (confirmed)
+
+The published Step 3 ZIP was produced from the Git tag and contains no `.git` path. A separate audit found that `tools/create_release_archive.py`, if used directly in the future, did not explicitly exclude repository internals and did not reject an output path inside the package. The helper now excludes `.git` and common cache directories and requires the archive to be written outside the package root. The final archive inspection remains the release authority.
+
+## F-023 — public-release boundary audit (confirmed)
+
+The complete Git history contains no raw-data/Word/spreadsheet/archive path, personal absolute path, credential signature, or blob larger than 50 MB. The two `/private/tmp` occurrences are intentional generic runtime references in the clean-room tool and report, not user-specific paths. The public visibility decision applies only to `lxlovetmy/step-crosswalk-reproducibility`; all other repositories in the account remain unchanged.

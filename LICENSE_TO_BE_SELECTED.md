@@ -1,8 +1,3 @@
-# License decision required
+# License selected
 
-The authors have not yet selected a license for the code in this release package.
-
-Until a license file is deliberately added by the rights holder, no permission should be inferred to copy, modify, or redistribute the package code. The licenses or public-use terms of upstream NHANES and PhysioNet data are separate and do not determine the license of this code.
-
-Before submission or public archiving, the human author should select an appropriate code license and replace this placeholder with the complete license text. Author names, ownership, funder requirements, and institutional policies must be confirmed by the author rather than inferred.
-
+The software in this repository is released under the MIT License; see `LICENSE` for the complete terms. This software licence does not alter the separate licences or public-use terms that govern the upstream NHANES and PhysioNet data, which are not redistributed in this repository.

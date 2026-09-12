@@ -3,12 +3,14 @@ message: "Please cite the associated manuscript and this software release."
 title: "Direction-specific wrist-step algorithm crosswalk reproducibility package"
 type: software
 version: 1.1.1
-date-released: 2026-08-22
+date-released: 2026-09-11
 authors:
   - family-names: "AUTHOR TO COMPLETE"
     given-names: "AUTHOR TO COMPLETE"
 abstract: "Code, exact direction-specific isotonic resources, and aggregate reference results for the NHANES wrist-step crosswalk study."
 repository-code: "https://github.com/lxlovetmy/step-crosswalk-reproducibility"
+repository-artifact: "https://github.com/lxlovetmy/step-crosswalk-reproducibility/releases/tag/v1.1.1"
+license: MIT
 keywords:
   - accelerometry
   - step count

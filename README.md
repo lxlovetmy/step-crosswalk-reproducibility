@@ -63,4 +63,4 @@ No raw data, participant identifiers, person-day/minute tables, fold assignments
 
 ## Human completion items
 
-The authors must choose a code license and complete author/repository metadata in `LICENSE_TO_BE_SELECTED.md` and `CITATION.cff` before public archiving. This package does not upload files, mint a DOI, or grant a license by implication.
+The software is released under the MIT License. Author names and identifiers in `CITATION.cff`, together with the final Zenodo DOI, remain to be completed before manuscript submission and DOI publication.

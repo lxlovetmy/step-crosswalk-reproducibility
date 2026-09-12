@@ -11,6 +11,8 @@
 - [x] **STEP 2:** run the current single-grid candidate from empty smoke/full output directories, including 300 bootstrap repetitions.
 - [x] **STEP 2:** refresh only validated references, Figure 4, provenance, and `MANIFEST.sha256`, then pass final clean-room acceptance.
 - [x] **STEP 3:** verify the final internal manifest and versioned ZIP before GitHub release as `v1.1.1`.
-- [ ] **AUTHOR TO COMPLETE:** choose and insert code license.
+- [x] MIT License selected and inserted for the software release.
+- [x] Make only `lxlovetmy/step-crosswalk-reproducibility` public after the final history/privacy audit.
+- [x] Fix the non-author Zenodo deposit metadata in `docs/ZENODO_DEPOSIT.md`.
 - [ ] **AUTHOR TO COMPLETE:** replace citation author/repository placeholders.
-- [ ] **AUTHOR TO COMPLETE:** choose archive, public date, and DOI; upload manually.
+- [ ] Add the final author metadata, publish the Zenodo software record, and insert its DOI before manuscript submission.

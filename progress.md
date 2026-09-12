@@ -61,3 +61,20 @@ Next action requires explicit user confirmation: Step 2, beginning with a smoke 
 - Final gates passed: 28/28 package tests; 96/96 terminal checks; Python AST syntax checks across 29 source/test files; all twelve input hashes; aggregate-output privacy headers; formal-path static guards; deterministic Figure 4 hash; and `git diff --check`. `MANIFEST.sha256` was regenerated as the final package write and verified successfully.
 
 Next action after final local gates: stop and obtain explicit user confirmation before Step 3. No commit, push, tag, release, DOI action, or manuscript edit has been performed.
+
+## 2026-09-11 — Step 3 completed
+
+- Reviewed and organized the validated package changes into three scoped commits ending at `a1ae3b7`.
+- Pushed `main`, created and pushed annotated tag `v1.1.1`, and published the GitHub Release.
+- Uploaded the versioned ZIP and SHA-256 file; local and GitHub asset digests matched `6dbc107e0e25e70ab29cca1a30c0e5f366e62fdf22be8785118aeaa6e2902bec`.
+- The release contained no raw participant data, Word manuscripts, or private-path material.
+
+## 2026-09-11 — Step 4 non-author work completed
+
+- The user authorized all Step 4 decisions and operations except author metadata.
+- Selected the MIT License and added its full text; aligned `pyproject.toml`, `CITATION.cff`, README, Code Availability text, and the release checklist.
+- Selected a version-specific Zenodo DOI and prepared every non-author deposit field in `docs/ZENODO_DEPOSIT.md`. Zenodo publication remains dependent on its required creator field.
+- Created new English and Chinese manuscript copies containing the exact `v1.1.1` GitHub release link; preserved the source manuscripts byte-for-byte.
+- Rendered and inspected all 35 English pages and all 22 Chinese pages. The changed English text spans pages 20–21; the changed Chinese text is on page 13. No clipping, overlap, missing glyphs, or broken pagination was found.
+- Hardened the release-archive helper against including `.git`/cache paths or writing a self-containing ZIP inside the package. The previously published Git-tag archive was separately confirmed not to contain `.git`.
+- Audited the complete Git history and current package for raw/Word/archive paths, personal absolute paths, credential signatures, and large blobs; no publish-blocking item was found. Only `lxlovetmy/step-crosswalk-reproducibility` was selected for public visibility; other account repositories are unaffected.
