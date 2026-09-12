@@ -1,8 +1,13 @@
 {
   "status": "RELEASE_CANDIDATE_PASS",
-  "check_count": 91,
+  "check_count": 96,
   "failure_count": 0,
   "checks": [
+    {
+      "name": "analysis_configuration_contract",
+      "status": "PASS",
+      "detail": "participant-grouped 5-fold OOF; n>=200; one equally-spaced 101-point common-support grid; locked seeds"
+    },
     {
       "name": "cohort_row_count",
       "status": "PASS",
@@ -136,7 +141,7 @@
     {
       "name": "common_support_detail_row_count",
       "status": "PASS",
-      "detail": "generated=378, reference=378"
+      "detail": "generated=252, reference=252"
     },
     {
       "name": "common_support_detail_numeric_reference",
@@ -156,7 +161,7 @@
     {
       "name": "continuous_bootstrap_row_count",
       "status": "PASS",
-      "detail": "generated=126, reference=126"
+      "detail": "generated=84, reference=84"
     },
     {
       "name": "continuous_bootstrap_numeric_reference",
@@ -246,7 +251,7 @@
     {
       "name": "wear_comparison_row_count",
       "status": "PASS",
-      "detail": "generated=111, reference=111"
+      "detail": "generated=93, reference=93"
     },
     {
       "name": "wear_comparison_numeric_reference",
@@ -321,7 +326,7 @@
     {
       "name": "common_support_detail_contract",
       "status": "PASS",
-      "detail": "rows=378, expected=378"
+      "detail": "rows=252, expected=252"
     },
     {
       "name": "common_support_summary_contract",
@@ -331,7 +336,7 @@
     {
       "name": "continuous_bootstrap_contract",
       "status": "PASS",
-      "detail": "rows=126, expected=126"
+      "detail": "rows=84, expected=84"
     },
     {
       "name": "cross_cycle_contract",
@@ -409,9 +414,14 @@
       "detail": "observed={960: (8646, 57080), 600: (9023, 60782), 720: (8936, 59845), 1296: (8066, 49564)}"
     },
     {
+      "name": "single_grid_common_support_schema",
+      "status": "PASS",
+      "detail": "summary=42; detail=126 original + 126 equally-spaced common-support; bootstrap=42 + 42"
+    },
+    {
       "name": "figure4_common_support_display_contract",
       "status": "PASS",
-      "detail": "exact_lower=42, displayed_lower=41, displayed_unchanged=1, displayed_median=-0.047"
+      "detail": "raw_lower=33, displayed_lower=32, displayed_unchanged=6, displayed_higher=4, displayed_median=-0.024"
     },
     {
       "name": "main_table_contract",
@@ -424,6 +434,16 @@
       "detail": "machine-readable files=20"
     },
     {
+      "name": "common_support_publication_copy_contract",
+      "status": "PASS",
+      "detail": "Table S4/S7/S8 files are byte-identical copies of their generated aggregate sources"
+    },
+    {
+      "name": "main_table3_common_support_contract",
+      "status": "PASS",
+      "detail": "all nine Table 3 common-support values come from common_support_linear_H"
+    },
+    {
       "name": "eight_figure_contract",
       "status": "PASS",
       "detail": "valid=8/8"
@@ -432,6 +452,11 @@
       "name": "figure4_three_panels",
       "status": "PASS",
       "detail": "['A', 'B', 'C']"
+    },
+    {
+      "name": "figure4_single_grid_method_contract",
+      "status": "PASS",
+      "detail": "common_support_linear_H from the single equally spaced common-support grid"
     },
     {
       "name": "sample_flow_set_contract",

@@ -1,10 +1,9 @@
 {
   "status": "PASS",
   "release_version": "1.1.1",
-  "validation_strategy": "fresh_output_directory_full_run_in_current_locked_runtime",
-  "started_utc": "2026-08-29T08:52:41Z",
-  "finished_utc": "2026-08-29T10:06:22Z",
-  "wall_time_seconds_approximate": 4421,
+  "validation_strategy": "fresh_output_directory_full_run_then_controlled_reference_promotion",
+  "started_utc": "2026-09-11T16:28:00Z",
+  "scientific_stages_finished_utc": "2026-09-11T17:26:38.118894+00:00",
   "input_hashes_verified": 12,
   "bootstrap_replicates": 300,
   "bootstrap_success": {
@@ -12,80 +11,47 @@
     "common_support": "300/300",
     "cross_cycle_and_fixed_threshold": "300/300"
   },
-  "release_domain_audit": {
-    "bootstrap_replicates": 0,
-    "whole_cohort_rows": 42,
-    "cross_cycle_rows": 84,
-    "whole_cohort_coverage_percent_range": [
-      89.9144,
-      90.0532
-    ],
-    "whole_cohort_coverage_percent_median": 90.0416,
-    "domain_E_range": [
-      0.1200,
-      0.3984
-    ],
-    "domain_E_median": 0.2377,
-    "domain_minus_global_E_range": [
-      -0.011330,
-      0.003520
-    ],
-    "domain_minus_global_E_median": -0.003419,
-    "cross_cycle_coverage_percent_range": [
-      88.5154,
-      91.1508
-    ],
-    "cross_cycle_coverage_percent_median": 90.0444,
-    "cross_cycle_penalty_range": [
-      -0.006267,
-      0.015437
-    ],
-    "cross_cycle_penalty_median": 0.000294
-  },
-  "sample_flow_set_assertion": {
-    "status": "PASS",
-    "positive_MEC_weight_subjects": 19151,
-    "seven_way_subjects": 14693,
-    "seven_way_person_days": 130186,
-    "troianowear_intersection_subjects": 14689,
-    "troianowear_intersection_person_days": 130179,
-    "valid_wear_subjects_before_adult_filter": 13137,
-    "final_adult_subjects": 8646,
-    "final_valid_person_days": 57080,
-    "seven_way_subjects_not_in_positive_MEC_weight_base": 0
-  },
-  "generated_output_file_count": 86,
-  "generated_output_bytes": 17025437,
-  "final_validation_status": "RELEASE_CANDIDATE_PASS",
-  "final_validation_check_count": 91,
-  "final_validation_failure_count": 0,
-  "initial_terminal_validation_attempt": {
-    "status": "BLOCKED",
-    "failure_count": 1,
-    "cause": "The bundled wear-comparison reference retained the obsolete display label full-range H while the regenerated table used complete-sample P05-P95 H.",
-    "numeric_identity_check": "All string fields matched after the one label substitution; maximum absolute numeric difference was 1.45e-14 and no difference exceeded 1e-12.",
-    "resolution": "Synchronized the reference display label and explicit sample-alignment method fields, then reran the terminal validator without rerunning the scientific stages."
-  },
+  "cohort_subjects": 8646,
+  "cohort_valid_person_days": 57080,
+  "directed_pairs": 42,
   "exact_knot_rows": 11416,
-  "direction_metadata_rows": 42,
   "maximum_exact_reconstruction_error_steps": 0.0,
-  "unit_tests": "18/18 PASS",
-  "real_converter_boundary_checks": "210/210 PASS across 42 directions",
-  "privacy_and_aggregate_only_checks": "PASS",
-  "clean_environment_reinstall": "NOT_RERUN; current locked runtime only",
-  "protected_writing_files_modified_under_user_authorization": true,
-  "protected_writing_hashes_updated_in_authority_manifest": true,
-  "excluded_extensions_run": false,
-  "excluded_extensions": [
-    "linear baseline",
-    "L1 isotonic regression",
-    "repeated cross-validation",
-    "1000-replicate bootstrap",
-    "external-cohort validation",
-    "PhysioNet v1.0.2 rerun"
-  ],
-  "v1_0_0_baseline_archive_retained": true,
-  "v1_0_0_archive_sha256": "8ed0437ea27cd39a4cef985fed2fb17814166b47e1b77cd37ffc81b2386ccd23",
-  "v1_1_0_archive_retained": true,
-  "v1_1_0_archive_sha256": "9b93876f959a9de4c55f18b471ed7783a7f34aad35feb6d04aa3e66bce8020b1"
+  "common_support": {
+    "detail_rows": 252,
+    "summary_rows": 42,
+    "bootstrap_rows": 84,
+    "grid": "101 equally spaced points in eligible-subgroup P05-P95 intersection",
+    "curve_estimator": "one full-resample subgroup isotonic fit reused for complete-sample and common-support H",
+    "maximum_absolute_E_reproduction_difference": 8.326672684688674e-17,
+    "maximum_absolute_complete_sample_H_reproduction_difference": 8.326672684688674e-17,
+    "displayed_lower_equal_higher": [32, 6, 4],
+    "displayed_median_change": -0.024,
+    "displayed_range": [-0.112, 0.024]
+  },
+  "wear_1296_adept_to_step_rf_common_support_H": {
+    "baseline_960": 0.357671,
+    "threshold_1296": 0.5221004
+  },
+  "initial_terminal_validation": {
+    "status": "BLOCKED",
+    "cause": "The figure builder did not emit the formal Figure1.png alias required by the validator; all scientific stages had completed.",
+    "resolution": "Added a byte-identical Figure1.png alias from the fixed-8000 attainment figure and a regression test, rebuilt the presentation layer only, then continued validation without rerunning scientific stages."
+  },
+  "pre_promotion_validation": {
+    "check_count": 96,
+    "failure_count": 8,
+    "classification": "Only the five deliberately stale method-affected reference CSVs differed."
+  },
+  "promoted_artifacts": {
+    "reference_csv_files": 5,
+    "figure4_files": 1
+  },
+  "final_validation_status": "RELEASE_CANDIDATE_PASS",
+  "final_validation_check_count": 96,
+  "final_validation_failure_count": 0,
+  "figure4_sha256": "2ac669ebf2c26412630f9e8984d7550fc40cb37f6231712f82cf2b3eb6ffca6c",
+  "aggregate_output_privacy_scan": "PASS",
+  "raw_data_or_docx_modified": false,
+  "git_commit_or_remote_operation": false,
+  "note": "The retained candidate output remains outside the package under .step2_reproduction_20260911/full_candidate for local audit."
 }

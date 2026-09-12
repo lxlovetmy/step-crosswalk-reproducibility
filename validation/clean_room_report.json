@@ -1,0 +1,12 @@
+{
+  "status": "PASS",
+  "started_utc": "2026-09-11T17:34:00.099866+00:00",
+  "finished_utc": "2026-09-11T18:33:28.092961+00:00",
+  "wall_time_seconds": 3568.166,
+  "returncode": 0,
+  "output_bytes": 19360249,
+  "validation_status": "RELEASE_CANDIDATE_PASS",
+  "validation_check_count": 96,
+  "validation_failure_count": 0,
+  "temporary_output_removed_after_report": true
+}

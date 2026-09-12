@@ -35,42 +35,24 @@ absolute_change,analysis_weighting,baseline_960,current,degenerate_status_change
 0.06520799994870619,,0.3104461498615042,0.3756541498102104,,,,,,complete-sample P05-P95 H,,,,,,3,continuous_largest_absolute_change,acti,,scrf,,1296
 0.06122579027590486,,0.2811618554498685,0.34238764572577335,,,,,,complete-sample P05-P95 H,,,,,,4,continuous_largest_absolute_change,adept,,acti,,1296
 0.05928840764389576,,0.3895679176326959,0.44885632527659164,,,,,,complete-sample P05-P95 H,,,,,,5,continuous_largest_absolute_change,vs,,adept,,1296
-,,,,,0.521598527768082,0.09386076775736996,0.24505707259065063,0.015006388162224119,common-support empirical H,0.11120413420041039,,0,0.1955502169665207,0.3228323907900223,,continuous_summary,,0.9612673203143993,,,600
-0.09386076775736996,,0.48310582793219436,0.3892450601748244,,,,,,common-support empirical H,,,,,,1,continuous_largest_absolute_change,adept,,vsrev,,600
-0.05521900751990949,,0.3546282975494588,0.2994092900295493,,,,,,common-support empirical H,,,,,,2,continuous_largest_absolute_change,adept,,oak,,600
-0.0499498588070762,,0.32061116865997735,0.27066130985290116,,,,,,common-support empirical H,,,,,,3,continuous_largest_absolute_change,scrf,,adept,,600
-0.04378682677342194,,0.3179602005719641,0.36174702734538605,,,,,,common-support empirical H,,,,,,4,continuous_largest_absolute_change,acti,,adept,,600
-0.03992061849269743,,0.23742822436764274,0.2773488428603402,,,,,,common-support empirical H,,,,,,5,continuous_largest_absolute_change,vsrev,,acti,,600
-,,,,,0.5022897434531035,0.08657335110099812,0.24500320213213803,0.013906477312895182,common-support empirical H,0.11339525511520976,,0,0.1900147226854531,0.31654275795903336,,continuous_summary,,0.9683980228506603,,,720
-0.08657335110099812,,0.48310582793219436,0.39653247683119625,,,,,,common-support empirical H,,,,,,1,continuous_largest_absolute_change,adept,,vsrev,,720
-0.05024786433667816,,0.32061116865997735,0.2703633043232992,,,,,,common-support empirical H,,,,,,2,continuous_largest_absolute_change,scrf,,adept,,720
-0.04751880420039256,,0.25499428205252384,0.3025130862529164,,,,,,common-support empirical H,,,,,,3,continuous_largest_absolute_change,vs,,scssl,,720
-0.041332929109412386,,0.2621471570891414,0.220814227979729,,,,,,common-support empirical H,,,,,,4,continuous_largest_absolute_change,adept,,vs,,720
-0.041205947694719525,,0.3546282975494588,0.31342234985473927,,,,,,common-support empirical H,,,,,,5,continuous_largest_absolute_change,adept,,oak,,720
-,,,,,0.49363236878124683,0.07280876865479674,0.24732324037868592,0.010525363754744207,common-support empirical H,0.11598107937904358,,0,0.17700121519542447,0.31633543158188404,,continuous_summary,,0.9765010939145937,,,1296
-0.07280876865479674,,0.48310582793219436,0.4102970592773976,,,,,,common-support empirical H,,,,,,1,continuous_largest_absolute_change,adept,,vsrev,,1296
-0.06383852029352122,,0.32061116865997735,0.25677264836645614,,,,,,common-support empirical H,,,,,,2,continuous_largest_absolute_change,scrf,,adept,,1296
-0.0378419719616257,,0.3546282975494588,0.3167863255878331,,,,,,common-support empirical H,,,,,,3,continuous_largest_absolute_change,adept,,oak,,1296
-0.03774456107057145,,0.3463798733908575,0.38412443446142897,,,,,,common-support empirical H,,,,,,4,continuous_largest_absolute_change,vs,,adept,,1296
-0.036908889786933574,,0.3365955058266447,0.3735043956135783,,,,,,common-support empirical H,,,,,,5,continuous_largest_absolute_change,oak,,adept,,1296
-,,,,,0.5272418755167605,0.08525583280868188,0.262986992461517,0.01625762825181562,common-support linear H,0.11671520727725383,,0,0.2050757416274545,0.33179436444580435,,continuous_summary,,0.9624017502633498,,,600
-0.08525583280868188,,0.48310582793219436,0.3978499951235125,,,,,,common-support linear H,,,,,,1,continuous_largest_absolute_change,adept,,vsrev,,600
-0.048216034423205795,,0.23742822436764274,0.28564425879084854,,,,,,common-support linear H,,,,,,2,continuous_largest_absolute_change,vsrev,,acti,,600
-0.04720444263361129,,0.32933582955563984,0.28213138692202855,,,,,,common-support linear H,,,,,,3,continuous_largest_absolute_change,scrf,,adept,,600
-0.04478875114419076,,0.2774023418762023,0.23261359073201152,,,,,,common-support linear H,,,,,,4,continuous_largest_absolute_change,adept,,vs,,600
-0.044540196444782576,,0.3286107072313535,0.37315090367613607,,,,,,common-support linear H,,,,,,5,continuous_largest_absolute_change,acti,,adept,,600
-,,,,,0.5132696958140003,0.07743171392569265,0.2500255331374551,0.0107923157381236,common-support linear H,0.11347991391594524,,0,0.20170114714887777,0.3336390887145866,,continuous_summary,,0.9692083299570537,,,720
-0.07743171392569265,,0.48310582793219436,0.4056741140065017,,,,,,common-support linear H,,,,,,1,continuous_largest_absolute_change,adept,,vsrev,,720
-0.05590199713865812,,0.2194328655828121,0.27533486272147023,,,,,,common-support linear H,,,,,,2,continuous_largest_absolute_change,vsrev,,scrf,,720
-0.04866528235122433,,0.2774023418762023,0.22873705952497794,,,,,,common-support linear H,,,,,,3,continuous_largest_absolute_change,adept,,vs,,720
-0.03215438271357557,,0.35496436287491706,0.3228099801613415,,,,,,common-support linear H,,,,,,4,continuous_largest_absolute_change,adept,,oak,,720
-0.031046734473947818,,0.27539805864797146,0.24435132417402364,,,,,,common-support linear H,,,,,,5,continuous_largest_absolute_change,adept,,acti,,720
-,,,,,0.528695470502541,0.1911922653545326,0.2591923280044429,0.01275953127101917,common-support linear H,0.12629570062834697,,0,0.1880944757253654,0.35606848445443146,,continuous_summary,,0.9495988979823353,,,1296
-0.1911922653545326,,0.3343005681901401,0.5254928335446727,,,,,,common-support linear H,,,,,,1,continuous_largest_absolute_change,adept,,scrf,,1296
-0.12115915381718723,,0.2774023418762023,0.3985614956933895,,,,,,common-support linear H,,,,,,2,continuous_largest_absolute_change,adept,,vs,,1296
-0.10114297120409621,,0.35496436287491706,0.45610733407901327,,,,,,common-support linear H,,,,,,3,continuous_largest_absolute_change,adept,,oak,,1296
-0.0725631811891837,,0.32933582955563984,0.25677264836645614,,,,,,common-support linear H,,,,,,4,continuous_largest_absolute_change,scrf,,adept,,1296
-0.060840759423547275,,0.40819115902342656,0.3473503995998793,,,,,,common-support linear H,,,,,,5,continuous_largest_absolute_change,vsrev,,scssl,,1296
+,,,,,0.525505345257958,0.08324313365677771,0.27386240051675825,0.016865610573447626,common-support H (101-point equally spaced grid),0.12348093110490442,,0,0.21343968372817468,0.3415369999984783,,continuous_summary,,0.9589984604164979,,,600
+0.08324313365677771,,0.49079861914083606,0.40755548548405834,,,,,,common-support H (101-point equally spaced grid),,,,,,1,continuous_largest_absolute_change,adept,,vsrev,,600
+0.05988730124655661,,0.21480712354761716,0.2746944247941738,,,,,,common-support H (101-point equally spaced grid),,,,,,2,continuous_largest_absolute_change,vsrev,,scrf,,600
+0.05192132618716894,,0.29527753949702384,0.2433562133098549,,,,,,common-support H (101-point equally spaced grid),,,,,,3,continuous_largest_absolute_change,adept,,vs,,600
+0.05124278137544597,,0.3339168180758487,0.28267403670040275,,,,,,common-support H (101-point equally spaced grid),,,,,,4,continuous_largest_absolute_change,scrf,,adept,,600
+0.048058047936051784,,0.3302687017702774,0.3783267497063292,,,,,,common-support H (101-point equally spaced grid),,,,,,5,continuous_largest_absolute_change,acti,,adept,,600
+,,,,,0.5073069992590694,0.08509246218016753,0.2633321706772044,0.012711292872478103,common-support H (101-point equally spaced grid),0.11622070363556014,,0,0.2065187281791729,0.34024154902790976,,continuous_summary,,0.9675877157442672,,,720
+0.08509246218016753,,0.49079861914083606,0.40570615696066853,,,,,,common-support H (101-point equally spaced grid),,,,,,1,continuous_largest_absolute_change,adept,,vsrev,,720
+0.06167852631257348,,0.21480712354761716,0.27648564986019064,,,,,,common-support H (101-point equally spaced grid),,,,,,2,continuous_largest_absolute_change,vsrev,,scrf,,720
+0.060072152474395984,,0.29527753949702384,0.23520538702262786,,,,,,common-support H (101-point equally spaced grid),,,,,,3,continuous_largest_absolute_change,adept,,vs,,720
+0.04906020734117067,,0.3302687017702774,0.37932890911144806,,,,,,common-support H (101-point equally spaced grid),,,,,,4,continuous_largest_absolute_change,acti,,adept,,720
+0.036535951893898466,,0.5438429511529679,0.5073069992590694,,,,,,common-support H (101-point equally spaced grid),,,,,,5,continuous_largest_absolute_change,scssl,,vsrev,,720
+,,,,,0.562869029112494,0.16442978109769152,0.2632182708340495,0.013577966086268364,common-support H (101-point equally spaced grid),0.12428822364200919,,0,0.19505630475667896,0.358355527587072,,continuous_summary,,0.9483024066121061,,,1296
+0.16442978109769152,,0.3576706238383281,0.5221004049360196,,,,,,common-support H (101-point equally spaced grid),,,,,,1,continuous_largest_absolute_change,adept,,scrf,,1296
+0.13542094015342532,,0.29527753949702384,0.43069847965044916,,,,,,common-support H (101-point equally spaced grid),,,,,,2,continuous_largest_absolute_change,adept,,vs,,1296
+0.10729603888329964,,0.3661914629164892,0.4734875017997888,,,,,,common-support H (101-point equally spaced grid),,,,,,3,continuous_largest_absolute_change,adept,,oak,,1296
+0.07207040997165798,,0.49079861914083606,0.562869029112494,,,,,,common-support H (101-point equally spaced grid),,,,,,4,continuous_largest_absolute_change,adept,,vsrev,,1296
+0.0712863238840235,,0.3339168180758487,0.2626304941918252,,,,,,common-support H (101-point equally spaced grid),,,,,,5,continuous_largest_absolute_change,scrf,,adept,,1296
 ,unweighted_primary,,,,87.26587609442535,1.3141038878488587,,,observed_target_attainment_pct,1.374265765266541,,,,,,attainment_summary,,,,7000.0,600
 ,WTMEC4YR_weighted_sensitivity,,,,88.65614126627361,1.3333973574956275,,,observed_target_attainment_pct,1.1551043476273686,,,,,,attainment_summary,,,,7000.0,600
 ,unweighted_primary,,,,81.3033359193173,1.4348288585966102,,,observed_target_attainment_pct,0.7314640363515461,,,,,,attainment_summary,,,,8000.0,600
