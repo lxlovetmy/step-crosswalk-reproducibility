@@ -7,8 +7,10 @@
 - [x] Exact-threshold converter and 42-row direction metadata/index included.
 - [x] Aggregate numeric and current visual references bundled.
 - [x] No raw data or Word files included.
-- [x] Formal 300-replicate clean-room calculation completed; v1.1.1 controlled integration and terminal validator results are recorded in `validation/`.
-- [x] Internal manifest and versioned ZIP preflight verified.
+- [x] Historical v1.1.1 300-replicate calculation and terminal validator evidence retained in `validation/`.
+- [x] **STEP 2:** run the current single-grid candidate from empty smoke/full output directories, including 300 bootstrap repetitions.
+- [x] **STEP 2:** refresh only validated references, Figure 4, provenance, and `MANIFEST.sha256`, then pass final clean-room acceptance.
+- [x] **STEP 3:** verify the final internal manifest and versioned ZIP before GitHub release as `v1.1.1`.
 - [ ] **AUTHOR TO COMPLETE:** choose and insert code license.
 - [ ] **AUTHOR TO COMPLETE:** replace citation author/repository placeholders.
 - [ ] **AUTHOR TO COMPLETE:** choose archive, public date, and DOI; upload manually.
